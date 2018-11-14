@@ -1,10 +1,10 @@
-function gfc() {
+function ggfc() {
   git \
     --no-pager diff \
     --name-only master..`git rev-parse --abbrev-ref HEAD`
 }
 
-function gb() {
+function ggb() {
   git for-each-ref \
     --sort=-committerdate \
     refs/heads/ \
