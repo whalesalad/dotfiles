@@ -1,5 +1,12 @@
-export PATH="/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin:$PATH"
-export PATH="$HOME/.rbenv/bin:$HOME/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/heroku/bin:/usr/local/share/npm/bin:$PATH"
+export PATH="/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+# Home stuff
+export PATH="$HOME/.rbenv/bin:$HOME/bin:$PATH"
+
+# Golang
+export PATH="/usr/local/opt/go/libexec/bin:$PATH"
+
+export GOPATH=$HOME/Code/go
 
 # virtualenvwrapper
 export WORKON_HOME=~/Envs
