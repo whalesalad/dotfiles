@@ -4,6 +4,11 @@ function ggfc() {
     --name-only master..`git rev-parse --abbrev-ref HEAD`
 }
 
+# This is really `heroku deploy`
+function gdeploy() {
+  git push "${1:-stage}" `git rev-parse --abbrev-ref HEAD`:master
+}
+
 function ggb() {
   git for-each-ref \
     --sort=-committerdate \
