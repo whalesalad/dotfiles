@@ -11,9 +11,11 @@ function gdeploy() {
 
 function ggb() {
   git for-each-ref \
+    --color=always \
     --sort=-committerdate \
     refs/heads/ \
-    --format='%(align:left,20)%(color:green)%(committerdate:relative)%(color:reset)%(end) %(align:left,50)%(color:yellow)%(refname:short)%(color:reset)%(end) %(color:red)%(objectname:short)%(color:reset) %(contents:subject) (%(authorname))'
+    --format='%(align:left,20)%(color:green)%(committerdate:relative)%(color:reset)%(end) %(align:left,50)%(color:yellow)%(refname:short)%(color:reset)%(end) %(color:red)%(objectname:short)%(color:reset) %(contents:subject) (%(authorname))' \
+    | head -n 15
 }
 
 function ggraph() {
