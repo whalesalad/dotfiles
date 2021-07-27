@@ -2,11 +2,17 @@
 
 ### Setup
 
-Clone this locally and ensure the `~/.zshrc` contains something like the following:
+1. Ensure that `zsh` is installed. Don't worry about setting it as your shell, ohmyzsh will do that.
+2. Install ohmyzsh: https://ohmyz.sh/#install
+
+Clone this locally and ensure the `~/.zshrc` contains something like this:
 
 ```
-ZSH_CUSTOM=$HOME/Code/dotfiles/zsh
+# Path to your oh-my-zsh installation.
+ZSH="/home/michael/.oh-my-zsh"
+ZSH_CUSTOM=$HOME/code/dotfiles/zsh
 
+source $ZSH/oh-my-zsh.sh
 ```
 
 
