@@ -22,7 +22,6 @@ stress --cpu  --timeout 900
 
 stress --hdd $(nproc) --hdd-bytes 100G --timeout 900
 
-
 # vim https://github.com/amix/vimrc
 git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
 sh ~/.vim_runtime/install_awesome_vimrc.sh
@@ -42,12 +41,8 @@ apt-cache policy docker-ce
 sudo apt install docker-ce
 
 sudo apt install nfs-common
-sudo mkdir -p /valhalla/{Videos,Movies}
+sudo mkdir -p /valhalla/lab
 sudo chown -R michael:staff /valhalla
 sudo chmod -R 755 /valhalla
 
-sudo mount valhalla.ws.internal:/volume4/Movies /valhalla/Movies/
-sudo mount valhalla.ws.internal:/volume4/Videos /valhalla/Videos/
-
-# rpi pass
-VqiCbVss
+sudo mount valhalla.ws.internal:/volume3/lab /valhalla/lab
