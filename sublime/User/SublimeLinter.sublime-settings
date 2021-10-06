@@ -1,0 +1,19 @@
+// SublimeLinter Settings - User
+{
+  "linters": {
+    "rubocop": {
+      "use_bundle_exec": true
+    }
+  },
+  "paths": {
+    "linux": [],
+    "osx": [
+      "/Users/michael/.rbenv/shims",
+      "/Users/michael/.rbenv/bin",
+      "/Users/michael/bin",
+      "/usr/local/bin",
+      "/usr/local/sbin"
+    ],
+    "windows": []
+  }
+}
