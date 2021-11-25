@@ -2,15 +2,6 @@
 # export WORKON_HOME=~/Envs
 # export VIRTUALENVWRAPPER_PYTHON=/usr/local/opt/python@3.9/libexec/bin/python
 # export VIRTUALENVWRAPPER_SH="/usr/local/bin/virtualenvwrapper.sh"
-# export ASDF_WUT="$HOME/.asdf/asdf.sh"
-
-# if [[ -a $VIRTUALENVWRAPPER_SH ]]; then
-#   source $VIRTUALENVWRAPPER_SH
-# fi
-
-# if [[ -a $ASDF_WUT ]]; then
-#   source $ASDF_WUT
-# fi
 
 # Homebrew
 export PATH="/opt/homebrew/bin:$PATH"
@@ -39,12 +30,15 @@ eval "$(pyenv virtualenv-init -)"
 #   eval "$(pyenv virtualenv-init -)";
 # fi
 
-# if which rbenv > /dev/null; then
-#   eval "$(rbenv init -)";
-# fi
+if which rbenv > /dev/null; then
+  eval "$(rbenv init -)";
+fi
 
 function tmlogs() {
   log show --predicate 'subsystem == "com.apple.TimeMachine"' --info --last 6h
 }
 
-
+# export asdf_src="/opt/homebrew/opt/asdf/libexec/asdf.sh"
+# if [[ -a $asdf_src ]]; then
+#   source $asdf_src
+# fi
