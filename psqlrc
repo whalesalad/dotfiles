@@ -3,12 +3,10 @@
 
 \pset null 'NULL'
 \pset border 2
-
 \x auto
 
 \set HISTCONTROL ignoredups
 \set COMP_KEYWORD_CASE upper
-
 \set QUIET OFF
 
 \echo '\nCurrent Host Server Date Time : '`date` '\n'
@@ -26,7 +24,11 @@
 \echo '\t:indexusage\t-- Index usage'
 \echo '\t:indexsize\t-- Index sizes'
 \echo '\t:indextotal\t-- Total size of all indexes'
+\echo '\t:bloat\t\t-- Table and index bloat'
+\echo '\t:vacuum\t\t-- Vacuum stats'
 \echo '\t:outliers\t-- Slowest queries from pg_stat_statements'
+\echo '\t:waits\t\t-- Wait events by type'
+\echo '\t:extensions\t-- Installed extensions'
 \echo '\t:menu\t\t-- Help Menu'
 \echo '\t\\h\t\t-- Help with SQL commands'
 \echo '\t\\?\t\t-- Help with psql commands\n'
@@ -38,36 +40,49 @@
 
 \echo 'Cheat sheet:\n'
 \echo '\tKill a process:\t\tSELECT pg_cancel_backend(pid)'
-\echo '\tForce kill a process:\tSELECT pg_terminate_backend(pid)\n'
+\echo '\tForce kill a process:\tSELECT pg_terminate_backend(pid)'
+\echo '\tReload configuration:\tSELECT pg_reload_conf()'
+\echo '\tDisplay replication:\tSELECT * FROM pg_stat_replication\n'
 
 -- Administration queries
 
 \set menu '\\i ~/.psqlrc'
 
-\set settings 'select name, setting,unit,context from pg_settings;'
+\set settings 'SELECT name, setting, unit, context FROM pg_settings;'
 
-\set ps 'SELECT pid, state, application_name AS source, age(now(),xact_start) AS running_for, waiting, query FROM pg_stat_activity WHERE query <> \'<insufficient privilege>\' AND state <> \'idle\' AND pid <> pg_backend_pid() ORDER BY query_start ASC;'
+\set sp '\\echo \'Current search_path: \' :SEARCH_PATH'
+\set clear '\\! clear;'
+\set ll '\\! ls -la;'
 
-\set locks 'SELECT a.datname, c.relname, l.transactionid, l.mode, l.granted, a.usename, a.query, a.query_start, age(now(), a.query_start) AS "age", a.pid FROM  pg_stat_activity a JOIN pg_locks l ON l.pid = a.pid JOIN pg_class c ON c.oid = l.relation ORDER BY a.query_start;'
+-- Updated for PostgreSQL 15+
+\set ps 'SELECT pid, state, application_name AS source, age(now(),xact_start) AS running_for, wait_event_type, wait_event, query FROM pg_stat_activity WHERE query <> \'<insufficient privilege>\' AND state <> \'idle\' AND pid <> pg_backend_pid() ORDER BY query_start ASC;'
 
-\set conninfo 'select usename, count(*) from pg_stat_activity group by usename;'
+\set locks 'SELECT a.datname, l.relation::regclass AS relname, l.locktype, l.mode, l.granted, a.usename, a.query, a.query_start, age(now(), a.query_start) AS "age", a.pid FROM pg_stat_activity a JOIN pg_locks l ON l.pid = a.pid WHERE NOT l.granted ORDER BY a.query_start;'
 
-\set activity 'select datname, pid, usename, application_name,client_addr, client_hostname, client_port, query, state from pg_stat_activity;'
+\set conninfo 'SELECT usename, count(*) FROM pg_stat_activity GROUP BY usename ORDER BY count(*) DESC;'
 
-\set dbsize 'SELECT datname, pg_size_pretty(pg_database_size(datname)) db_size FROM pg_database ORDER BY db_size;'
+\set activity 'SELECT datname, pid, usename, application_name, client_addr, client_hostname, client_port, wait_event_type, wait_event, state, query FROM pg_stat_activity;'
 
-\set tablesize 'SELECT nspname || \'.\' || relname AS \"relation\", pg_size_pretty(pg_relation_size(C.oid)) AS "size" FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace) WHERE nspname NOT IN (\'pg_catalog\', \'information_schema\') ORDER BY pg_relation_size(C.oid) DESC LIMIT 40;'
+\set dbsize 'SELECT datname, pg_size_pretty(pg_database_size(datname)) AS db_size FROM pg_database ORDER BY pg_database_size(datname) DESC;'
 
-\set uptime 'select now() - pg_postmaster_start_time() AS uptime;'
+\set tablesize 'SELECT schemaname || \'.\' || relname AS "relation", pg_size_pretty(pg_total_relation_size(schemaname||\'.\'||relname)) AS "total_size", pg_size_pretty(pg_relation_size(schemaname||\'.\'||relname)) AS "table_size", pg_size_pretty(pg_total_relation_size(schemaname||\'.\'||relname) - pg_relation_size(schemaname||\'.\'||relname)) AS "index_size" FROM pg_catalog.pg_statio_user_tables ORDER BY pg_total_relation_size(schemaname||\'.\'||relname) DESC LIMIT 40;'
 
-\set cachehit 'SELECT \'index hit rate\' AS name, (sum(idx_blks_hit)) / sum(idx_blks_hit + idx_blks_read) AS ratio FROM pg_statio_user_indexes UNION ALL SELECT \'table hit rate\' AS name, sum(heap_blks_hit) / (sum(heap_blks_hit) + sum(heap_blks_read)) AS ratio FROM pg_statio_user_tables;'
+\set uptime 'SELECT now() - pg_postmaster_start_time() AS uptime;'
 
-\set indexusage 'SELECT relname, CASE idx_scan WHEN 0 THEN \'Insufficient data\' ELSE (100 * idx_scan / (seq_scan + idx_scan))::text END percent_of_times_index_used, n_live_tup rows_in_table FROM pg_stat_user_tables ORDER BY n_live_tup DESC;'
+\set cachehit 'SELECT \'index hit rate\' AS name, CASE WHEN sum(idx_blks_hit + idx_blks_read) = 0 THEN \'No data\' ELSE to_char((sum(idx_blks_hit) * 100.0 / (sum(idx_blks_hit) + sum(idx_blks_read))), \'990.00%\') END AS ratio FROM pg_statio_user_indexes UNION ALL SELECT \'table hit rate\' AS name, CASE WHEN sum(heap_blks_hit + heap_blks_read) = 0 THEN \'No data\' ELSE to_char((sum(heap_blks_hit) * 100.0 / (sum(heap_blks_hit) + sum(heap_blks_read))), \'990.00%\') END AS ratio FROM pg_statio_user_tables;'
 
-\set indexsize 'SELECT c.relname AS name, pg_size_pretty(sum(c.relpages::bigint*8192)::bigint) AS size FROM pg_class c LEFT JOIN pg_namespace n ON (n.oid = c.relnamespace) WHERE n.nspname NOT IN (\'pg_catalog\', \'information_schema\') AND n.nspname !~ \'^pg_toast\' AND c.relkind=\'i\' GROUP BY c.relname ORDER BY sum(c.relpages) DESC;'
+\set indexusage 'SELECT relname, CASE WHEN seq_scan + idx_scan = 0 THEN \'No data\' WHEN idx_scan = 0 THEN \'Insufficient data\' ELSE to_char((100 * idx_scan / (seq_scan + idx_scan)), \'990.00%\') END AS percent_of_times_index_used, n_live_tup AS rows_in_table FROM pg_stat_user_tables ORDER BY n_live_tup DESC;'
 
-\set totalindexsize 'with sizes as ( SELECT sum(c.relpages::bigint*8192)::bigint AS size FROM pg_class c LEFT JOIN pg_namespace n ON (n.oid = c.relnamespace) WHERE n.nspname NOT IN (\'pg_catalog\', \'information_schema\') AND n.nspname !~ \'^pg_toast\' AND c.relkind=\'i\' GROUP BY c.relname ORDER BY sum(c.relpages) DESC) select pg_size_pretty(sum(size)) as total_index_size from sizes;'
+\set indexsize 'SELECT s.schemaname || \'.\' || s.relname AS tablename, indexrelname AS index, pg_size_pretty(pg_relation_size(i.indexrelid)) AS index_size, pg_size_pretty(pg_relation_size(s.relid)) AS table_size FROM pg_stat_user_indexes s JOIN pg_index i ON s.indexrelid = i.indexrelid ORDER BY pg_relation_size(i.indexrelid) DESC LIMIT 25;'
 
-\set lastvacuum 'select relname, last_vacuum, last_analyze from pg_stat_all_tables where schemaname = \'public\';'
+\set indextotal 'SELECT pg_size_pretty(sum(pg_relation_size(idx))) AS total_index_size FROM pg_index i JOIN pg_class idx ON i.indexrelid = idx.oid WHERE indisvalid AND idx.relkind = \'i\' AND idx.relpersistence <> \'t\';'
 
-\set outliers 'SELECT query AS qry, concat((total_time / calls), \' ms\') as avg_time, interval \'1 millisecond\' * total_time AS exec_time, to_char((total_time/sum(total_time) OVER()) * 100, \'FM90D0\') || \'%\'  AS prop_exec_time, to_char(calls, \'FM999G999G990\') AS ncalls, interval \'1 millisecond\' * (blk_read_time + blk_write_time) AS sync_io_time FROM pg_stat_statements WHERE userid = (SELECT usesysid FROM pg_user WHERE usename = current_user LIMIT 1) ORDER BY total_time DESC LIMIT 10;'
+\set vacuum 'SELECT relname, last_vacuum, last_autovacuum, last_analyze, last_autoanalyze FROM pg_stat_user_tables ORDER BY last_autovacuum;'
+
+\set outliers 'SELECT query, calls, total_exec_time / 1000 AS total_time_sec, (total_exec_time / calls) / 1000 AS avg_time_sec, (100 * total_exec_time / sum(total_exec_time) OVER())::numeric(10,2) AS percentage_cpu FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 10;'
+
+\set waits 'SELECT wait_event_type, wait_event, count(*) FROM pg_stat_activity WHERE wait_event IS NOT NULL GROUP BY wait_event_type, wait_event ORDER BY count(*) DESC;'
+
+\set bloat 'WITH constants AS (SELECT current_setting(\'block_size\')::numeric AS bs, 23 AS hdr, 8 AS ma), bloat_info AS (SELECT ma, bs, schemaname, tablename, (datawidth+(hdr+ma-(case when hdr%ma=0 THEN ma ELSE hdr%ma END)))::numeric AS datahdr, (maxfracsum*(nullhdr+ma-(case when nullhdr%ma=0 THEN ma ELSE nullhdr%ma END))) AS nullhdr2 FROM (SELECT schemaname, tablename, hdr, ma, bs, SUM((1-null_frac)*avg_width) AS datawidth, MAX(null_frac) AS maxfracsum, hdr+(SELECT 1+count(*)/8 FROM pg_stats s2 WHERE null_frac<>0 AND s2.schemaname = s.schemaname AND s2.tablename = s.tablename) AS nullhdr FROM pg_stats s, constants GROUP BY 1,2,3,4,5) AS foo), table_bloat AS (SELECT schemaname, tablename, cc.relpages, bs, CEIL((cc.reltuples*((datahdr+ma- (CASE WHEN datahdr%ma=0 THEN ma ELSE datahdr%ma END))+nullhdr2+4))/(bs-20::float)) AS otta FROM bloat_info JOIN pg_class cc ON cc.relname = bloat_info.tablename JOIN pg_namespace nn ON cc.relnamespace = nn.oid AND nn.nspname = bloat_info.schemaname AND nn.nspname <> \'information_schema\'), index_bloat AS (SELECT schemaname, tablename, bs, COALESCE(c2.relname,\'?\') AS iname, COALESCE(c2.reltuples,0) AS ituples, COALESCE(c2.relpages,0) AS ipages, COALESCE(CEIL((c2.reltuples*(datahdr-12))/(bs-20::float)),0) AS iotta FROM bloat_info JOIN pg_class cc ON cc.relname = bloat_info.tablename JOIN pg_namespace nn ON cc.relnamespace = nn.oid AND nn.nspname = bloat_info.schemaname AND nn.nspname <> \'information_schema\' JOIN pg_index i ON indrelid = cc.oid JOIN pg_class c2 ON c2.oid = i.indexrelid) SELECT type, schemaname, object_name, bloat, pg_size_pretty(raw_waste) as waste FROM (SELECT \'table\' as type, schemaname, tablename as object_name, ROUND((CASE WHEN otta=0 THEN 0.0 ELSE table_bloat.relpages/otta::numeric END)::numeric,1) AS bloat, CASE WHEN relpages < otta THEN \'0\' ELSE (bs*(table_bloat.relpages-otta)::bigint)::bigint END AS raw_waste FROM table_bloat UNION SELECT \'index\' as type, schemaname, tablename || \'::\'  || iname as object_name, ROUND((CASE WHEN iotta=0 OR ipages=0 THEN 0.0 ELSE ipages/iotta::numeric END)::numeric,1) AS bloat, CASE WHEN ipages < iotta THEN \'0\' ELSE (bs*(ipages-iotta))::bigint END AS raw_waste FROM index_bloat) bloat_summary ORDER BY raw_waste DESC, bloat DESC LIMIT 40;'
+
+\set extensions 'SELECT name, default_version, installed_version, comment FROM pg_available_extensions ORDER BY name;'
