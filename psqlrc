@@ -24,6 +24,7 @@
 \echo '\t:indexusage\t-- Index usage'
 \echo '\t:indexsize\t-- Index sizes'
 \echo '\t:indextotal\t-- Total size of all indexes'
+\echo '\t:indexstatus\t-- Status of indexes being created'
 \echo '\t:bloat\t\t-- Table and index bloat'
 \echo '\t:vacuum\t\t-- Vacuum stats'
 \echo '\t:outliers\t-- Slowest queries from pg_stat_statements'
@@ -76,6 +77,22 @@
 \set indexsize 'SELECT s.schemaname || \'.\' || s.relname AS tablename, indexrelname AS index, pg_size_pretty(pg_relation_size(i.indexrelid)) AS index_size, pg_size_pretty(pg_relation_size(s.relid)) AS table_size FROM pg_stat_user_indexes s JOIN pg_index i ON s.indexrelid = i.indexrelid ORDER BY pg_relation_size(i.indexrelid) DESC LIMIT 25;'
 
 \set indextotal 'SELECT pg_size_pretty(sum(pg_relation_size(idx))) AS total_index_size FROM pg_index i JOIN pg_class idx ON i.indexrelid = idx.oid WHERE indisvalid AND idx.relkind = \'i\' AND idx.relpersistence <> \'t\';'
+
+\set indexstatus 'SELECT
+  now()::TIME(0),
+  a.query,
+  p.phase,
+  round(p.blocks_done / p.blocks_total::numeric * 100, 2) AS "% done",
+  p.blocks_total,
+  p.blocks_done,
+  p.tuples_total,
+  p.tuples_done,
+  ai.schemaname,
+  ai.relname,
+  ai.indexrelname
+FROM pg_stat_progress_create_index p
+JOIN pg_stat_activity a ON p.pid = a.pid
+LEFT JOIN pg_stat_all_indexes ai on ai.relid = p.relid AND ai.indexrelid = p.index_relid;'
 
 \set vacuum 'SELECT relname, last_vacuum, last_autovacuum, last_analyze, last_autoanalyze FROM pg_stat_user_tables ORDER BY last_autovacuum;'
 
