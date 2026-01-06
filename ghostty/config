@@ -44,34 +44,38 @@ palette = 14=#4fbaef
 palette = 15=#b8c6d5
 
 # Tab Configuration
-# Show title bar with X button
-window-decoration = true
-gtk-titlebar = true
+# Show window chrome with X button and minimize/maximize
+# window-decoration = true
+# gtk-titlebar = true
+# window-theme = dark
 
 # UNBIND EVERYTHING - Let tmux/shell handle everything except these specific keys
-keybind = clear
-
-# ONLY these keybindings:
-# Toshy is sending Ctrl+T (not Super+T, not Ctrl+Shift+T)
-keybind = ctrl+t=new_tab
-
-# Cmd+N (Toshy sends Ctrl+N)
-keybind = ctrl+n=new_window
-
-# Cmd+W to close tab (Toshy sends Ctrl+W)
-keybind = ctrl+w=close_surface
-
-# Cmd+1-9 for tab navigation (Toshy sends Ctrl+1-9)
-keybind = ctrl+one=goto_tab:1
-keybind = ctrl+two=goto_tab:2
-keybind = ctrl+three=goto_tab:3
-keybind = ctrl+four=goto_tab:4
-keybind = ctrl+five=goto_tab:5
-keybind = ctrl+six=goto_tab:6
-keybind = ctrl+seven=goto_tab:7
-keybind = ctrl+eight=goto_tab:8
-keybind = ctrl+nine=goto_tab:9
-keybind = ctrl+zero=goto_tab:10
+# keybind = clear
+#
+# # Explicitly unbind Ctrl+A for tmux (screen bindings)
+# keybind = ctrl+a=unbind
+#
+# # ONLY these keybindings:
+# # Toshy is sending Ctrl+T (not Super+T, not Ctrl+Shift+T)
+# keybind = ctrl+t=new_tab
+#
+# # Cmd+N (Toshy sends Ctrl+N)
+# keybind = ctrl+n=new_window
+#
+# # Cmd+W to close tab (Toshy sends Ctrl+W)
+# keybind = ctrl+w=close_surface
+#
+# # Cmd+1-9 for tab navigation (Toshy sends Ctrl+1-9)
+# keybind = ctrl+one=goto_tab:1
+# keybind = ctrl+two=goto_tab:2
+# keybind = ctrl+three=goto_tab:3
+# keybind = ctrl+four=goto_tab:4
+# keybind = ctrl+five=goto_tab:5
+# keybind = ctrl+six=goto_tab:6
+# keybind = ctrl+seven=goto_tab:7
+# keybind = ctrl+eight=goto_tab:8
+# keybind = ctrl+nine=goto_tab:9
+# keybind = ctrl+zero=goto_tab:10
 
 # That's it. Nothing else.
 
