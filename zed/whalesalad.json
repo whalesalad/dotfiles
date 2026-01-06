@@ -1,0 +1,173 @@
+{
+  "$schema": "https://zed.dev/schema/themes/v0.2.0.json",
+  "name": "whalesalad",
+  "author": "whalesalad",
+  "themes": [
+    {
+      "name": "whalesalad",
+      "appearance": "dark",
+      "style": {
+        "background": "#090a1bf2",
+        "editor.background": "#090a1bf2",
+        "editor.gutter.background": "#090a1bf2",
+        "editor.active_line.background": "#ffffff20",
+        "editor.line_number": "#666666",
+        "editor.active_line_number": "#00ffff",
+        "foreground": "#f8f8f8",
+        "text": "#f8f8f8",
+        "text.muted": "#9194a1",
+        "cursor": "#00ffff",
+        "selection": "#007dff80",
+        "border": "#333333",
+        "border.variant": "#444444",
+        "panel.background": "#090a1bf2",
+        "surface.background": "#0d0e1f",
+        "elevated_surface.background": "#12132a",
+        "tab_bar.background": "#090a1bf2",
+        "tab.inactive_background": "#0a0b1c",
+        "tab.active_background": "#12132a",
+        "status_bar.background": "#090a1bf2",
+        "title_bar.background": "#090a1bf2",
+        "toolbar.background": "#090a1bf2",
+        "element.background": "#12132a",
+        "element.hover": "#1a1b35",
+        "element.selected": "#007dff40",
+        "ghost_element.hover": "#1a1b3540",
+        "ghost_element.selected": "#007dff30",
+        "syntax": {
+          "comment": {
+            "color": "#9194a1",
+            "background_color": "#66666640",
+            "font_style": "italic"
+          },
+          "string": {
+            "color": "#8fff58",
+            "background_color": "#102622fa"
+          },
+          "string.escape": {
+            "color": "#d972de"
+          },
+          "string.regex": {
+            "color": "#e9c062"
+          },
+          "string.special": {
+            "color": "#cf7d34"
+          },
+          "keyword": {
+            "color": "#ff3854"
+          },
+          "constant": {
+            "color": "#0a9cff"
+          },
+          "constant.numeric": {
+            "color": "#0a9cff"
+          },
+          "constant.boolean": {
+            "color": "#0a9cff"
+          },
+          "variable": {
+            "color": "#588aff"
+          },
+          "variable.special": {
+            "color": "#4064bb"
+          },
+          "function": {
+            "color": "#f1d950"
+          },
+          "function.method": {
+            "color": "#f1d950"
+          },
+          "type": {
+            "color": "#6fd3ff"
+          },
+          "type.builtin": {
+            "color": "#6fd3ff"
+          },
+          "constructor": {
+            "color": "#6fd3ff"
+          },
+          "attribute": {
+            "color": "#45c1ea"
+          },
+          "property": {
+            "color": "#6fd3ff"
+          },
+          "operator": {
+            "color": "#ff3854"
+          },
+          "storage": {
+            "color": "#99cf50"
+          },
+          "storage.modifier": {
+            "color": "#99cf50"
+          },
+          "support": {
+            "color": "#00ffbc"
+          },
+          "support.function": {
+            "color": "#f1d950"
+          },
+          "support.constant": {
+            "color": "#cf6a4c"
+          },
+          "tag": {
+            "color": "#45c1ea"
+          },
+          "punctuation": {
+            "color": "#f8f8f8"
+          },
+          "punctuation.bracket": {
+            "color": "#f8f8f8"
+          },
+          "punctuation.delimiter": {
+            "color": "#f8f8f8"
+          },
+          "label": {
+            "color": "#6fd3ff"
+          },
+          "title": {
+            "color": "#6fd3ff"
+          },
+          "enum": {
+            "color": "#6fd3ff"
+          },
+          "emphasis": {
+            "color": "#e9c062",
+            "font_style": "italic"
+          },
+          "emphasis.strong": {
+            "color": "#e9c062",
+            "font_weight": 700
+          },
+          "link_uri": {
+            "color": "#578bb3"
+          },
+          "link_text": {
+            "color": "#e18964"
+          },
+          "embedded": {
+            "color": "#d972de"
+          },
+          "error": {
+            "color": "#fd5ff1",
+            "background_color": "#562d56bf"
+          },
+          "warning": {
+            "color": "#e9c062"
+          },
+          "hint": {
+            "color": "#00ffbc"
+          },
+          "invalid.deprecated": {
+            "color": "#fd5ff1",
+            "font_style": "italic"
+          },
+          "invalid.illegal": {
+            "color": "#fd5ff1",
+            "background_color": "#562d56bf"
+          }
+        }
+      }
+    }
+  ]
+}
