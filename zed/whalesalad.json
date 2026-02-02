@@ -7,9 +7,9 @@
       "name": "whalesalad",
       "appearance": "dark",
       "style": {
-        "background": "#090a1bf2",
-        "editor.background": "#090a1bf2",
-        "editor.gutter.background": "#090a1bf2",
+        "background": "#090a1be6",
+        "editor.background": "#090a1be6",
+        "editor.gutter.background": "#090a1be6",
         "editor.active_line.background": "#ffffff20",
         "editor.line_number": "#666666",
         "editor.active_line_number": "#00ffff",
@@ -20,20 +20,41 @@
         "selection": "#007dff80",
         "border": "#333333",
         "border.variant": "#444444",
-        "panel.background": "#090a1bf2",
+        "panel.background": "#090a1be6",
         "surface.background": "#0d0e1f",
         "elevated_surface.background": "#12132a",
-        "tab_bar.background": "#090a1bf2",
+        "tab_bar.background": "#090a1bcc",
         "tab.inactive_background": "#0a0b1c",
         "tab.active_background": "#12132a",
-        "status_bar.background": "#090a1bf2",
-        "title_bar.background": "#090a1bf2",
-        "toolbar.background": "#090a1bf2",
+        "status_bar.background": "#090a1bd9",
+        "title_bar.background": "#090a1bd9",
+        "toolbar.background": "#090a1bd9",
         "element.background": "#12132a",
         "element.hover": "#1a1b35",
         "element.selected": "#007dff40",
         "ghost_element.hover": "#1a1b3540",
         "ghost_element.selected": "#007dff30",
+        "error": "#ff5555",
+        "error.background": "#5a1a1a80",
+        "error.border": "#ff555540",
+        "warning": "#f8f8f8",
+        "warning.background": "#4a3a1a80",
+        "warning.border": "#ffaa5560",
+        "info": "#6fd3ff",
+        "info.background": "#1a3a4a80",
+        "info.border": "#6fd3ff40",
+        "hint": "#9194a1",
+        "hint.background": "#2a2a2e80",
+        "hint.border": "#9194a140",
+        "unreachable": "#666666",
+        "unreachable.background": "#2a2a2e60",
+        "unreachable.border": "#66666640",
+        "predictive": "#588aff",
+        "predictive.background": "#1a2a4a60",
+        "predictive.border": "#588aff40",
+        "ignored": "#666666",
+        "ignored.background": "#2a2a2e40",
+        "ignored.border": "#66666630",
         "syntax": {
           "comment": {
             "color": "#9194a1",
@@ -72,10 +93,10 @@
             "color": "#4064bb"
           },
           "function": {
-            "color": "#f1d950"
+            "color": "#f0b850"
           },
           "function.method": {
-            "color": "#f1d950"
+            "color": "#f0b850"
           },
           "type": {
             "color": "#6fd3ff"
@@ -105,7 +126,7 @@
             "color": "#00ffbc"
           },
           "support.function": {
-            "color": "#f1d950"
+            "color": "#f0b850"
           },
           "support.constant": {
             "color": "#cf6a4c"
@@ -153,7 +174,8 @@
             "background_color": "#562d56bf"
           },
           "warning": {
-            "color": "#e9c062"
+            "color": "#f8f8f8",
+            "background_color": "#4a3a1a80"
           },
           "hint": {
             "color": "#00ffbc"

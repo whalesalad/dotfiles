@@ -9,7 +9,7 @@ font-size = 14.5
 #font-style = Regular
 
 # Dense rendering like iTerm2
-font-thicken = true
+#font-thicken = true
 adjust-cell-height = 10%
 adjust-cell-width = -5%
 
