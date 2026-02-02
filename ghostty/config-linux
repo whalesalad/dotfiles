@@ -17,16 +17,12 @@ adjust-cell-width = -5%
 # ========================
 background-opacity = 0.9
 background-blur = true
-window-theme = dark
-macos-titlebar-style = tabs
+gtk-titlebar = true
 
 # Emoji & Rendering
 # =================
 # Disable emoji rendering
 grapheme-width-method = legacy
-
-# Bell
-bell-features = no-audio, no-title
 
 # Cursor
 # ======
