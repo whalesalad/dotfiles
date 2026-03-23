@@ -26,34 +26,39 @@ window#waybar {
     border-radius: 8px;
 }
 
-/* Workspaces */
+/* Workspaces — individual pills matching right-side style */
 #workspaces {
-    background: @bg1;
-    border-radius: 8px;
-    padding: 0 4px;
+    background: transparent;
+    padding: 0;
 }
 
 #workspaces button {
+    background: @bg1;
     color: @bg3;
-    padding: 2px 10px;
-    border-radius: 6px;
+    padding: 0 12px;
+    margin: 4px 2px;
+    border-radius: 8px;
     transition: all 0.15s ease;
+    box-shadow: none;
 }
 
 #workspaces button:hover {
     background: @bg2;
     color: @fg;
+    box-shadow: none;
 }
 
 #workspaces button.active {
-    background: @cyan;
-    color: @bg;
+    background: @bg1;
+    color: @cyan;
     font-weight: bold;
+    box-shadow: none;
 }
 
 #workspaces button.urgent {
-    background: @red;
-    color: @fg2;
+    background: @bg1;
+    color: @red;
+    box-shadow: none;
 }
 
 /* Window title */
@@ -120,6 +125,10 @@ window#waybar {
 
 #backlight {
     color: @yellow;
+}
+
+#memory {
+    color: @fg;
 }
 
 #tray {
