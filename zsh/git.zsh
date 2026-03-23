@@ -14,8 +14,8 @@ function ggb() {
     --color=always \
     --sort=-committerdate \
     refs/heads/ \
-    --format='%(align:left,20)%(color:green)%(committerdate:relative)%(color:reset)%(end) %(align:left,50)%(color:yellow)%(refname:short)%(color:reset)%(end) %(color:red)%(objectname:short)%(color:reset) %(contents:subject) (%(authorname))' \
-    | head -n 15
+    --format='%(align:left,20)%(color:green)%(committerdate:relative)%(color:reset)%(end) %(align:left,60)%(color:yellow)%(refname:short)%(color:reset)%(end) %(color:red)%(objectname:short)%(color:reset) %(contents:subject) (%(authorname))' \
+    | head -n 20
 }
 
 function ggraph() {

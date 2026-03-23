@@ -1,0 +1,59 @@
+# Ghostty Configuration
+# Ported from iTerm2 profile
+# Reload with: Cmd+Shift+Comma (macOS) or Ctrl+Shift+Comma (Linux)
+
+# Font Configuration
+# ==================
+font-family = Cascadia Mono PL
+font-size = 14.5
+#font-style = Regular
+
+# Dense rendering like iTerm2
+font-thicken = true
+adjust-cell-height = 10%
+adjust-cell-width = -5%
+
+# Window & Visual Settings
+# ========================
+background-opacity = 0.9
+background-blur = true
+gtk-titlebar = true
+
+# Emoji & Rendering
+# =================
+# Disable emoji rendering
+grapheme-width-method = legacy
+
+# Cursor
+# ======
+#cursor-style = underline
+cursor-style-blink = true
+
+# Color Scheme (Ported from iTerm2)
+# ==================================
+# Background and foreground
+background = #101010
+foreground = #ffffff
+cursor-color = #ffffff
+selection-background = #b5d5ff
+selection-foreground = #000000
+
+# ANSI Colors (0-7)
+palette = 0=#000000
+palette = 1=#e61313
+palette = 2=#6ed908
+palette = 3=#ff8000
+palette = 4=#3465a4
+palette = 5=#75507b
+palette = 6=#06989a
+palette = 7=#d3d7cf
+
+# ANSI Bright Colors (8-15)
+palette = 8=#555753
+palette = 9=#e30e00
+palette = 10=#8ae234
+palette = 11=#ffa600
+palette = 12=#729fcf
+palette = 13=#ad7fa8
+palette = 14=#34e2e2
+palette = 15=#eeeeec
