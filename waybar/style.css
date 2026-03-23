@@ -74,6 +74,7 @@ window#waybar {
 #network,
 #pulseaudio,
 #backlight,
+#memory,
 #tray {
     background: @bg1;
     padding: 0 12px;
