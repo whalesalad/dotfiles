@@ -9,15 +9,24 @@ function lenv() {
   export $(cat .env | xargs)
 }
 
-# Function to SSH and attach to tmux session
+# Open Lucifer's tmux workspace picker or a named session.
 lu() {
-    if [ $# -eq 0 ]; then
-        echo "Usage: ssht <namespace>"
-        echo "Available sessions:"
-        ssh lucifer tmux ls
-        return 1
+    if [ $# -gt 1 ]; then
+        echo "Usage: lu [session-name]" >&2
+        return 2
     fi
-    ssh lucifer -t "tmux a -t $1"
+
+    if [ $# -eq 1 ]; then
+        case "$1" in
+            ''|*[!A-Za-z0-9_-]*)
+                echo "lu: invalid session name: $1" >&2
+                return 2
+                ;;
+        esac
+        ssh -t lucifer "\$HOME/code/dotfiles/bin/t $1"
+    else
+        ssh -t lucifer '$HOME/code/dotfiles/bin/t'
+    fi
 }
 
 # Alias to list remote tmux sessions

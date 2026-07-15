@@ -1,0 +1,633 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+set +x
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd -P)
+
+WORKSPACE_NAMES=()
+WORKSPACE_ROOTS=()
+WORKSPACE_PYENVS=()
+ACTIVE_NAMES=()
+ACTIVE_WINDOWS=()
+SET_ENV_NAMES=()
+SET_ENV_VALUES=()
+REMOVE_ENV_NAMES=()
+
+CONFIG_LOADED=0
+INCOMPLETE_SESSION=""
+FOUND_INDEX=-1
+
+TMUX_ARGS=()
+if [[ -n ${T_TMUX_SOCKET:-} ]]; then
+    TMUX_ARGS+=( -L "$T_TMUX_SOCKET" )
+fi
+if [[ -n ${T_TMUX_CONFIG:-} ]]; then
+    TMUX_ARGS+=( -f "$T_TMUX_CONFIG" )
+fi
+
+tmux_command() {
+    command tmux "${TMUX_ARGS[@]}" "$@"
+}
+
+error() {
+    printf 't: %s\n' "$*" >&2
+}
+
+die() {
+    error "$@"
+    exit 1
+}
+
+usage() {
+    printf 'Usage: t [session-name]\n' >&2
+    exit 2
+}
+
+valid_session_name() {
+    [[ $1 =~ ^[A-Za-z0-9_-]+$ ]]
+}
+
+find_index() {
+    local needle=$1
+    shift
+    local index=0
+    local value
+
+    FOUND_INDEX=-1
+    for value in "$@"; do
+        if [[ $value == "$needle" ]]; then
+            FOUND_INDEX=$index
+            return 0
+        fi
+        index=$((index + 1))
+    done
+    return 1
+}
+
+workspace() {
+    [[ $# -ge 2 ]] || die "workspace definitions require a name and root_dir"
+
+    local name=$1
+    shift
+    valid_session_name "$name" || die "invalid workspace name: $name"
+
+    if find_index "$name" "${WORKSPACE_NAMES[@]}"; then
+        die "duplicate workspace definition: $name"
+    fi
+
+    local root_dir=""
+    local pyenv_name=""
+    local saw_root=0
+    local saw_pyenv=0
+    local property
+
+    for property in "$@"; do
+        case $property in
+            root_dir=*)
+                (( saw_root == 0 )) || die "duplicate root_dir for workspace: $name"
+                root_dir=${property#root_dir=}
+                saw_root=1
+                ;;
+            pyenv=*)
+                (( saw_pyenv == 0 )) || die "duplicate pyenv for workspace: $name"
+                pyenv_name=${property#pyenv=}
+                saw_pyenv=1
+                ;;
+            *)
+                die "unknown property for workspace $name: ${property%%=*}"
+                ;;
+        esac
+    done
+
+    [[ -n $root_dir ]] || die "workspace $name is missing root_dir"
+    if (( saw_pyenv == 1 )); then
+        [[ -n $pyenv_name ]] || die "workspace $name has an empty pyenv"
+    fi
+
+    WORKSPACE_NAMES+=( "$name" )
+    WORKSPACE_ROOTS+=( "$root_dir" )
+    WORKSPACE_PYENVS+=( "$pyenv_name" )
+}
+
+load_config() {
+    (( CONFIG_LOADED == 0 )) || return 0
+    CONFIG_LOADED=1
+
+    local config_file
+    if [[ -n ${T_CONFIG_FILE:-} ]]; then
+        config_file=$T_CONFIG_FILE
+    else
+        local host=${T_HOSTNAME:-$(hostname -s)}
+        config_file="$REPO_ROOT/workspaces/$host.sh"
+    fi
+
+    [[ -e $config_file ]] || return 0
+    [[ -r $config_file ]] || die "workspace configuration is not readable: $config_file"
+
+    # shellcheck disable=SC1090
+    source "$config_file"
+}
+
+session_exists() {
+    tmux_command has-session -t "=$1" 2>/dev/null
+}
+
+attach_or_switch() {
+    local name=$1
+
+    if [[ ${T_NO_ATTACH:-0} == 1 ]]; then
+        return 0
+    fi
+
+    if [[ -n ${TMUX:-} ]]; then
+        tmux_command switch-client -t "=$name"
+    else
+        exec tmux "${TMUX_ARGS[@]}" attach-session -t "=$name"
+    fi
+}
+
+neutralize_python_environment() {
+    local active_virtualenv=${VIRTUAL_ENV:-}
+
+    if [[ -n ${_OLD_VIRTUAL_PATH:-} ]]; then
+        PATH=$_OLD_VIRTUAL_PATH
+    elif [[ -n $active_virtualenv ]]; then
+        local virtualenv_bin=${active_virtualenv%/}/bin
+        local new_path=""
+        local part
+        local old_ifs=$IFS
+        IFS=:
+        for part in $PATH; do
+            if [[ $part != "$virtualenv_bin" ]]; then
+                if [[ -n $new_path ]]; then
+                    new_path="$new_path:$part"
+                else
+                    new_path=$part
+                fi
+            fi
+        done
+        IFS=$old_ifs
+        PATH=$new_path
+    fi
+
+    if [[ -n ${_OLD_VIRTUAL_PYTHONHOME:-} ]]; then
+        PYTHONHOME=$_OLD_VIRTUAL_PYTHONHOME
+        export PYTHONHOME
+    elif [[ -n $active_virtualenv ]]; then
+        unset PYTHONHOME || true
+    fi
+
+    unset PYENV_VERSION PYENV_ACTIVATE_SHELL PYENV_VIRTUAL_ENV VIRTUAL_ENV
+    unset _OLD_VIRTUAL_PATH _OLD_VIRTUAL_PYTHONHOME _OLD_VIRTUAL_PS1
+    export PATH
+}
+
+emit_environment() {
+    local marker=$1
+    local variable
+
+    printf '%s\0' "$marker"
+    while IFS= read -r variable; do
+        printf '%s=%s\0' "$variable" "${!variable}"
+    done < <(compgen -e | LC_ALL=C sort)
+}
+
+environment_snapshots() {
+    local root_dir=$1
+    local pyenv_name=$2
+
+    (
+        set -eo pipefail
+        set +x
+
+        emit_environment '@@T_BASELINE@@'
+        neutralize_python_environment
+        cd "$root_dir"
+
+        if [[ -e .env ]]; then
+            [[ -f .env && -r .env ]] || {
+                error "environment file is not readable: $root_dir/.env"
+                exit 1
+            }
+            set -a
+            # shellcheck disable=SC1091
+            source ./.env >/dev/null
+            set +a
+        fi
+
+        if [[ -n $pyenv_name ]]; then
+            command -v pyenv >/dev/null 2>&1 || {
+                error "pyenv is required for workspace environment: $pyenv_name"
+                exit 1
+            }
+            pyenv prefix "$pyenv_name" >/dev/null 2>&1 || {
+                error "unknown pyenv environment: $pyenv_name"
+                exit 1
+            }
+
+            # Ensure the configured environment wins over anything set by .env.
+            neutralize_python_environment
+            local activation
+            activation=$(PYENV_SHELL=bash pyenv sh-activate "$pyenv_name") || {
+                error "failed to activate pyenv environment: $pyenv_name"
+                exit 1
+            }
+            eval "$activation"
+        fi
+
+        emit_environment '@@T_FINAL@@'
+        printf '%s\0' '@@T_DONE@@'
+    )
+}
+
+ignored_environment_name() {
+    case $1 in
+        PWD|OLDPWD|SHLVL|_|PS1|TMUX|TMUX_PANE|TERM|TERMCAP|COLUMNS|LINES)
+            return 0
+            ;;
+        SSH_*|DISPLAY|WAYLAND_DISPLAY|XAUTHORITY|WINDOWID)
+            return 0
+            ;;
+        T_TMUX_SOCKET|T_TMUX_CONFIG|T_CONFIG_FILE|T_HOSTNAME|T_NO_ATTACH|T_FZF_BIN|T_COLUMNS|T_FAIL_AFTER_SESSION_CREATE)
+            return 0
+            ;;
+        BASH_FUNC_*)
+            return 0
+            ;;
+    esac
+    return 1
+}
+
+add_remove_environment() {
+    local name=$1
+    if ! find_index "$name" "${REMOVE_ENV_NAMES[@]}"; then
+        REMOVE_ENV_NAMES+=( "$name" )
+    fi
+}
+
+add_set_environment() {
+    local name=$1
+    local value=$2
+
+    if find_index "$name" "${SET_ENV_NAMES[@]}"; then
+        SET_ENV_VALUES[$FOUND_INDEX]=$value
+    else
+        SET_ENV_NAMES+=( "$name" )
+        SET_ENV_VALUES+=( "$value" )
+    fi
+}
+
+environment_assignment_names() {
+    local env_file=$1
+    local line
+    local assignment_re='^[[:space:]]*(export[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*)='
+
+    [[ -f $env_file ]] || return 0
+    while IFS= read -r line || [[ -n $line ]]; do
+        if [[ $line =~ $assignment_re ]]; then
+            printf '%s\n' "${BASH_REMATCH[2]}"
+        fi
+    done < "$env_file"
+}
+
+prepare_environment() {
+    local root_dir=$1
+    local pyenv_name=$2
+    local baseline_names=()
+    local baseline_values=()
+    local final_names=()
+    local final_values=()
+    local section=""
+    local complete=0
+    local entry
+    local name
+    local value
+
+    SET_ENV_NAMES=()
+    SET_ENV_VALUES=()
+    REMOVE_ENV_NAMES=()
+
+    while IFS= read -r -d '' entry; do
+        case $entry in
+            '@@T_BASELINE@@')
+                section=baseline
+                continue
+                ;;
+            '@@T_FINAL@@')
+                section=final
+                continue
+                ;;
+            '@@T_DONE@@')
+                complete=1
+                continue
+                ;;
+        esac
+
+        [[ $entry == *=* ]] || continue
+        name=${entry%%=*}
+        value=${entry#*=}
+        case $section in
+            baseline)
+                baseline_names+=( "$name" )
+                baseline_values+=( "$value" )
+                ;;
+            final)
+                final_names+=( "$name" )
+                final_values+=( "$value" )
+                ;;
+        esac
+    done < <(environment_snapshots "$root_dir" "$pyenv_name")
+
+    (( complete == 1 )) || die "failed to prepare environment for: $root_dir"
+
+    local python_name
+    for python_name in \
+        PYENV_VERSION PYENV_ACTIVATE_SHELL PYENV_VIRTUAL_ENV VIRTUAL_ENV \
+        _OLD_VIRTUAL_PATH _OLD_VIRTUAL_PYTHONHOME _OLD_VIRTUAL_PS1; do
+        add_remove_environment "$python_name"
+    done
+
+    local index
+    for index in "${!final_names[@]}"; do
+        name=${final_names[$index]}
+        value=${final_values[$index]}
+        ignored_environment_name "$name" && continue
+
+        if ! find_index "$name" "${baseline_names[@]}"; then
+            add_set_environment "$name" "$value"
+        elif [[ ${baseline_values[$FOUND_INDEX]} != "$value" ]]; then
+            add_set_environment "$name" "$value"
+        fi
+    done
+
+    for index in "${!baseline_names[@]}"; do
+        name=${baseline_names[$index]}
+        ignored_environment_name "$name" && continue
+        if ! find_index "$name" "${final_names[@]}"; then
+            add_remove_environment "$name"
+        fi
+    done
+
+    # An explicit pyenv is authoritative even when the invoking shell is
+    # already using the same environment. The removal commands above must be
+    # followed by concrete session values in that case.
+    if [[ -n $pyenv_name ]]; then
+        for python_name in \
+            PYENV_VERSION PYENV_ACTIVATE_SHELL PYENV_VIRTUAL_ENV VIRTUAL_ENV \
+            _OLD_VIRTUAL_PATH _OLD_VIRTUAL_PYTHONHOME _OLD_VIRTUAL_PS1; do
+            if find_index "$python_name" "${final_names[@]}"; then
+                add_set_environment "$python_name" "${final_values[$FOUND_INDEX]}"
+            fi
+        done
+    fi
+
+    # Values are always evaluated by Bash, never by a dotenv parser. Scanning
+    # assignment names ensures an explicit .env value becomes a session
+    # override even when it happens to equal the invoking shell's value.
+    while IFS= read -r name; do
+        [[ -n $name ]] || continue
+        if find_index "$name" "${final_names[@]}"; then
+            add_set_environment "$name" "${final_values[$FOUND_INDEX]}"
+        fi
+    done < <(environment_assignment_names "$root_dir/.env")
+
+    # PATH is always normalized so a virtualenv path from the tmux server
+    # cannot leak into a neutral session.
+    if find_index PATH "${final_names[@]}"; then
+        add_set_environment PATH "${final_values[$FOUND_INDEX]}"
+    fi
+}
+
+tmux_quote() {
+    local value=$1
+
+    value=${value//\\/\\\\}
+    value=${value//\$/\\\$}
+    value=${value//\"/\\\"}
+    value=${value//$'\n'/\\n}
+    value=${value//$'\r'/\\r}
+    value=${value//$'\t'/\\t}
+    if [[ $value == '~'* ]]; then
+        value="\\$value"
+    fi
+    printf '"%s"' "$value"
+}
+
+stream_tmux_environment() {
+    local session=$1
+    local name
+    local index
+
+    for name in "${REMOVE_ENV_NAMES[@]}"; do
+        printf 'set-environment -r -t "=%s" %s\n' "$session" "$name"
+    done
+
+    for index in "${!SET_ENV_NAMES[@]}"; do
+        name=${SET_ENV_NAMES[$index]}
+        printf 'set-environment -t "=%s" %s %s\n' \
+            "$session" "$name" "$(tmux_quote "${SET_ENV_VALUES[$index]}")"
+    done
+}
+
+cleanup_incomplete_session() {
+    if [[ -n $INCOMPLETE_SESSION ]]; then
+        tmux_command kill-session -t "=$INCOMPLETE_SESSION" 2>/dev/null || true
+    fi
+}
+
+trap cleanup_incomplete_session EXIT
+
+create_session() {
+    local name=$1
+    local root_dir=$2
+    local pyenv_name=$3
+
+    [[ -d $root_dir ]] || die "root directory does not exist for $name: $root_dir"
+    root_dir=$(cd "$root_dir" && pwd -P)
+
+    prepare_environment "$root_dir" "$pyenv_name"
+
+    if ! tmux_command new-session -d -s "$name" -n shell -c "$root_dir" 'sleep 86400'; then
+        if session_exists "$name"; then
+            attach_or_switch "$name"
+            return 0
+        fi
+        die "failed to create tmux session: $name"
+    fi
+    INCOMPLETE_SESSION=$name
+
+    if [[ ${T_FAIL_AFTER_SESSION_CREATE:-0} == 1 ]]; then
+        die "forced failure after creating tmux session: $name"
+    fi
+
+    stream_tmux_environment "$name" | tmux_command source-file -
+
+    local pane_id
+    pane_id=$(tmux_command list-panes -t "=$name" -F '#{pane_id}' | head -n 1)
+    [[ -n $pane_id ]] || die "failed to find bootstrap pane for: $name"
+
+    local shell_command
+    shell_command=$(tmux_command show-options -gv default-command)
+    if [[ -z $shell_command ]]; then
+        local default_shell
+        default_shell=$(tmux_command show-options -gv default-shell)
+        [[ -n $default_shell ]] || default_shell=${SHELL:-/bin/sh}
+        printf -v shell_command 'exec %q' "$default_shell"
+    fi
+    tmux_command respawn-pane -k -t "$pane_id" -c "$root_dir" "$shell_command"
+
+    INCOMPLETE_SESSION=""
+}
+
+open_named_session() {
+    local name=$1
+
+    if session_exists "$name"; then
+        attach_or_switch "$name"
+        return 0
+    fi
+
+    load_config
+
+    local root_dir=$PWD
+    local pyenv_name=""
+    if find_index "$name" "${WORKSPACE_NAMES[@]}"; then
+        root_dir=${WORKSPACE_ROOTS[$FOUND_INDEX]}
+        pyenv_name=${WORKSPACE_PYENVS[$FOUND_INDEX]}
+    fi
+
+    create_session "$name" "$root_dir" "$pyenv_name"
+    attach_or_switch "$name"
+}
+
+collect_active_sessions() {
+    ACTIVE_NAMES=()
+    ACTIVE_WINDOWS=()
+
+    local output
+    output=$(tmux_command list-sessions -F $'#{session_name}\t#{session_windows}' 2>/dev/null) || return 0
+
+    local name
+    local windows
+    while IFS=$'\t' read -r name windows; do
+        [[ -n $name ]] || continue
+        ACTIVE_NAMES+=( "$name" )
+        ACTIVE_WINDOWS+=( "$windows" )
+    done <<< "$output"
+}
+
+catalog_records() {
+    load_config
+    collect_active_sessions
+
+    local all_names=( "${WORKSPACE_NAMES[@]}" "${ACTIVE_NAMES[@]}" )
+    local columns=${T_COLUMNS:-${COLUMNS:-}}
+    if [[ -z $columns ]]; then
+        columns=$(tput cols 2>/dev/null || printf '80')
+    fi
+    [[ $columns =~ ^[0-9]+$ ]] || columns=80
+
+    local name
+    local marker
+    local windows
+    local root_dir
+    local active_index
+    local workspace_index
+
+    while IFS= read -r name; do
+        [[ -n $name ]] || continue
+        marker=' '
+        windows=""
+        root_dir=""
+
+        if find_index "$name" "${ACTIVE_NAMES[@]}"; then
+            active_index=$FOUND_INDEX
+            marker='*'
+            windows=${ACTIVE_WINDOWS[$active_index]}
+        fi
+        if find_index "$name" "${WORKSPACE_NAMES[@]}"; then
+            workspace_index=$FOUND_INDEX
+            root_dir=${WORKSPACE_ROOTS[$workspace_index]}
+        fi
+
+        if (( columns < 80 )); then
+            printf '%s\t%s %s\n' "$name" "$marker" "$name"
+        else
+            if [[ -n $windows ]]; then
+                windows="$windows windows"
+            fi
+            printf '%s\t%s %s\t%s\t%s\n' "$name" "$marker" "$name" "$windows" "$root_dir"
+        fi
+    done < <(printf '%s\n' "${all_names[@]}" | LC_ALL=C sort -u)
+}
+
+picker() {
+    local records
+    records=$(catalog_records)
+
+    if [[ -z $records ]]; then
+        die "no running sessions or configured workspaces"
+    fi
+
+    local fzf_bin=${T_FZF_BIN:-fzf}
+    if ! command -v "$fzf_bin" >/dev/null 2>&1; then
+        error "fzf is required for picker mode; use t <session-name> instead"
+        printf '%s\n' "$records" | cut -f 1 >&2
+        return 1
+    fi
+
+    local selected
+    local picker_status
+    set +e
+    selected=$(printf '%s\n' "$records" | "$fzf_bin" \
+        --delimiter=$'\t' \
+        --with-nth=2.. \
+        --no-multi \
+        --no-sort \
+        --no-hscroll \
+        --layout=reverse \
+        --prompt='session> ' \
+        --header='* running')
+    picker_status=$?
+    set -e
+
+    case $picker_status in
+        0)
+            ;;
+        1|130)
+            return 0
+            ;;
+        *)
+            die "fzf failed with status $picker_status"
+            ;;
+    esac
+
+    [[ -n $selected ]] || return 0
+    local name=${selected%%$'\t'*}
+
+    # A picker row may refer to an externally created session with a name
+    # outside the public t/lu naming contract. It is safe to attach because
+    # the name came from tmux itself and is passed as a single argument.
+    if session_exists "$name"; then
+        attach_or_switch "$name"
+        return 0
+    fi
+
+    valid_session_name "$name" || die "invalid configured workspace name: $name"
+    open_named_session "$name"
+}
+
+main() {
+    [[ $# -le 1 ]] || usage
+
+    if [[ $# -eq 1 ]]; then
+        valid_session_name "$1" || die "invalid session name: $1"
+        open_named_session "$1"
+    else
+        picker
+    fi
+}
+
+main "$@"
