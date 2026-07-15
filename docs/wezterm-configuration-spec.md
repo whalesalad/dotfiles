@@ -27,7 +27,9 @@ The live Alacritty configuration and its imported Modus Vivendi theme are the so
 - cell width and line height: WezTerm defaults, equivalent to Alacritty's zero offsets;
 - foreground/background, cursor, selection, normal ANSI, and bright ANSI colors: exact values from `~/.config/alacritty-themes/themes/modus-vivendi.yaml`.
 
-The tab bar is hidden while only one tab exists and becomes visible when a second tab opens. Its active, inactive, hover, and background colors are derived directly from the same Modus Vivendi palette. WezTerm's normal terminal type is retained rather than forcing Alacritty's `xterm-256color`, so WezTerm-specific terminal capabilities remain available.
+The tab bar is hidden while only one tab exists and becomes visible when a second tab opens. It uses WezTerm's default fancy appearance rather than custom active, inactive, or hover styling. Tab labels are fixed at 24 display columns, plus two columns of padding on each side, so short titles have more breathing room and every tab has a consistent width. This is intentionally a fixed-width approximation; WezTerm's fancy tab bar cannot divide the full window width equally among tabs.
+
+WezTerm's normal terminal type is retained rather than forcing Alacritty's `xterm-256color`, so WezTerm-specific terminal capabilities remain available.
 
 The explicit half-intensity font rules prevent applications that mark status or placeholder text as dim from switching to Cascadia Code PL ExtraLight. This keeps stroke weight consistent with Alacritty; WezTerm still conveys the dim attribute through color intensity.
 
@@ -42,6 +44,12 @@ WezTerm will explicitly provide:
 - Command+1 through Command+9: activate exact one-based tab indexes 1 through 9.
 
 Because Toshy emits Control+Shift+T and Control+Shift+W for its terminal Command mappings, those are the WezTerm triggers for tab creation and closure. Toshy's Command+number path emits Control+number, so Control+1 through Control+9 are the WezTerm tab-selection triggers. Actual terminal Control behavior such as Control+C remains unchanged.
+
+## Scrolling Behavior
+
+One vertical wheel tick scrolls three lines in WezTerm's normal scrollback buffer. The custom wheel bindings apply only when the alternate screen is inactive and the running application has not enabled mouse reporting.
+
+Tmux, Vim, pagers, and other mouse-aware or alternate-screen applications continue to receive or interpret wheel input through WezTerm's existing behavior. No system-wide mouse settings or Toshy mappings are changed.
 
 ## Safety and Rollback
 
@@ -74,4 +82,7 @@ Interactive verification will then confirm:
 3. Command+1 through Command+9 select the corresponding tabs;
 4. Command+W closes the current tab immediately and closes the window when used on its final tab;
 5. terminal Control+C and other standard terminal controls still reach the shell;
-6. colors, font, dimensions, and transparency visually match Alacritty.
+6. colors, font, dimensions, and transparency visually match Alacritty;
+7. fancy tabs retain WezTerm's default styling while short labels occupy a consistent 28-column content width;
+8. one wheel tick moves normal scrollback by three lines in either direction;
+9. wheel behavior inside tmux or another mouse-aware alternate-screen application remains unchanged.
