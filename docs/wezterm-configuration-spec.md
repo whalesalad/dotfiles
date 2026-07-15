@@ -20,6 +20,7 @@ The live Alacritty configuration and its imported Modus Vivendi theme are the so
 
 - font family: `Cascadia Code PL`;
 - font weight/style: Regular;
+- dim/half-intensity text: retain Regular or Regular Italic rather than WezTerm's generated ExtraLight rule, while preserving dimmed color intensity;
 - font size: 15 pt;
 - initial terminal size: 120 columns by 40 rows;
 - background opacity: 0.90;
@@ -27,6 +28,8 @@ The live Alacritty configuration and its imported Modus Vivendi theme are the so
 - foreground/background, cursor, selection, normal ANSI, and bright ANSI colors: exact values from `~/.config/alacritty-themes/themes/modus-vivendi.yaml`.
 
 The tab bar is hidden while only one tab exists and becomes visible when a second tab opens. Its active, inactive, hover, and background colors are derived directly from the same Modus Vivendi palette. WezTerm's normal terminal type is retained rather than forcing Alacritty's `xterm-256color`, so WezTerm-specific terminal capabilities remain available.
+
+The explicit half-intensity font rules prevent applications that mark status or placeholder text as dim from switching to Cascadia Code PL ExtraLight. This keeps stroke weight consistent with Alacritty; WezTerm still conveys the dim attribute through color intensity.
 
 ## Keyboard Behavior
 
