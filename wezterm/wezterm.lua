@@ -3,6 +3,10 @@ local act = wezterm.action
 
 local config = wezterm.config_builder()
 
+-- Performance trial: render through Vulkan via WezTerm's WebGPU frontend.
+config.front_end = "WebGpu"
+config.webgpu_power_preference = "HighPerformance"
+
 -- Match the live Alacritty font and geometry.
 local regular_font = wezterm.font({
   family = "Cascadia Code PL",
