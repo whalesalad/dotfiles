@@ -7,6 +7,41 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "markdown_preview_font_size": 18.0,
+  "markdown_preview_font_family": "Verdana",
+  "preview_tabs": {
+    "enable_preview_from_project_panel": true
+  },
+  "focus_follows_mouse": {
+    "enabled": true
+  },
+  "diff_view_style": "split",
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-5.4",
+      "enable_thinking": false,
+      "effort": "high"
+    },
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "search": {
+    "include_ignored": true,
+  },
+  "edit_predictions": {
+    "provider": "copilot",
+  },
   "active_pane_modifiers": {
     "inactive_opacity": 1.0,
   },
@@ -15,8 +50,7 @@
     "git_status": false,
   },
   "title_bar": {
-    "show_branch_icon": false,
-  },
+    },
   "languages": {
     "JavaScript": {
       "tab_size": 2,
@@ -36,9 +70,9 @@
         },
       },
     },
-  },
-  "features": {
-    "edit_prediction_provider": "copilot",
+    "YAML": {
+      "tab_size": 2,
+    },
   },
   "buffer_line_height": "comfortable",
   "ssh_connections": [
@@ -48,7 +82,42 @@
       "projects": [
         {
           "paths": [
+            "/home/michael"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/homelab"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/invoicing"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/agents"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/cloud-sitrep/./"
+          ]
+        },
+        {
+          "paths": [
             "/home/michael/code/ocean/data-pipeline"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/data-pipeline/./"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/fparse/./"
           ]
         },
         {
@@ -58,16 +127,72 @@
         },
         {
           "paths": [
+            "/home/michael/code/ocean/hetzner/./"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/infrastructure"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/megadb"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/pulsar"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/pulsar/./"
+          ]
+        },
+        {
+          "paths": [
             "/home/michael/code/ocean/t3"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/t3-A"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/t3-ns-retries"
           ]
         },
         {
           "paths": [
             "/home/michael/code/ocean/t4"
           ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/phosphor"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/teamux"
+          ]
         }
       ]
     },
+    {
+      "host": "yolo",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/michael/code/titan/pulsar"
+          ]
+        }
+      ]
+    }
   ],
   "icon_theme": "Catppuccin Latte",
   "terminal": {
@@ -78,6 +203,7 @@
     "metrics": false,
   },
   "project_panel": {
+    "dock": "left",
     "hide_root": true,
     "indent_size": 20.0,
     "git_status": true,
@@ -102,3 +228,4 @@
     "dark": "whalesalad",
   },
 }
+
