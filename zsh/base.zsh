@@ -29,6 +29,10 @@ lu() {
     fi
 }
 
+strip_trailing_ws() {
+  perl -pe 's/[ \t]+$//'
+}
+
 # Alias to list remote tmux sessions
 alias luls='ssh lucifer tmux ls'
 
