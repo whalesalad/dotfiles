@@ -1,0 +1,104 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "active_pane_modifiers": {
+    "inactive_opacity": 1.0,
+  },
+  "tabs": {
+    "file_icons": false,
+    "git_status": false,
+  },
+  "title_bar": {
+    "show_branch_icon": false,
+  },
+  "languages": {
+    "JavaScript": {
+      "tab_size": 2,
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+    "Vue.js": {
+      "tab_size": 2,
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+  },
+  "features": {
+    "edit_prediction_provider": "copilot",
+  },
+  "buffer_line_height": "comfortable",
+  "ssh_connections": [
+    {
+      "host": "lucifer",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/michael/code/ocean/data-pipeline"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/fxgarage"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/t3"
+          ]
+        },
+        {
+          "paths": [
+            "/home/michael/code/ocean/t4"
+          ]
+        }
+      ]
+    },
+  ],
+  "icon_theme": "Catppuccin Latte",
+  "terminal": {
+    "font_family": "BlexMono Nerd Font",
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "project_panel": {
+    "hide_root": true,
+    "indent_size": 20.0,
+    "git_status": true,
+    "folder_icons": true,
+    "entry_spacing": "standard",
+    "auto_reveal_entries": false,
+  },
+  "base_keymap": "SublimeText",
+  "scroll_sensitivity": 4.0,
+  "minimap": {
+    "show": "never",
+  },
+  "buffer_font_weight": 400.0,
+  "buffer_font_family": "Cascadia Code PL",
+  "colorize_brackets": true,
+  "show_edit_predictions": true,
+  "ui_font_size": 16,
+  "buffer_font_size": 15.0,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "whalesalad",
+  },
+}
