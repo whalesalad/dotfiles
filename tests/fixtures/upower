@@ -1,0 +1,38 @@
+#!/bin/sh
+
+case ${1:-} in
+    -e)
+        if [ "${UPOWER_SCENARIO:-}" != missing-battery ]; then
+            printf '%s\n' /org/freedesktop/UPower/devices/battery_BAT0
+        fi
+        ;;
+    -i)
+        case ${UPOWER_SCENARIO:-} in
+            discharging)
+                printf '%s\n' \
+                    '  state:               discharging' \
+                    '  time to empty:       7.7 hours' \
+                    '  percentage:          72%'
+                ;;
+            charging)
+                printf '%s\n' \
+                    '  state:               charging' \
+                    '  time to full:         1.2 hours' \
+                    '  percentage:          72%'
+                ;;
+            full)
+                printf '%s\n' \
+                    '  state:               fully-charged' \
+                    '  percentage:          100%'
+                ;;
+            missing-time)
+                printf '%s\n' \
+                    '  state:               discharging' \
+                    '  percentage:          72%'
+                ;;
+        esac
+        ;;
+    *)
+        exit 1
+        ;;
+esac

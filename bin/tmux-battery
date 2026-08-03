@@ -1,0 +1,81 @@
+#!/bin/sh
+
+# UPower provides both the charge state and its calculated time-to-empty.
+upower_bin=${TMUX_BATTERY_UPOWER:-upower}
+
+if ! command -v "$upower_bin" >/dev/null 2>&1; then
+    exit 0
+fi
+
+battery_device=$(
+    "$upower_bin" -e 2>/dev/null |
+        awk '/\/battery_/ { print; exit }'
+)
+
+if [ -z "$battery_device" ]; then
+    exit 0
+fi
+
+LC_ALL=C "$upower_bin" -i "$battery_device" 2>/dev/null |
+    awk '
+        function field_value(line) {
+            sub(/^[^:]*:[[:space:]]*/, "", line)
+            sub(/[[:space:]]+$/, "", line)
+            return line
+        }
+
+        /^[[:space:]]*state:/ {
+            state = field_value($0)
+        }
+
+        /^[[:space:]]*percentage:/ {
+            percentage = field_value($0)
+        }
+
+        /^[[:space:]]*time to empty:/ {
+            time_to_empty = field_value($0)
+        }
+
+        END {
+            sub(/%$/, "", percentage)
+            if (percentage !~ /^[0-9]+([.][0-9]+)?$/) {
+                exit
+            }
+
+            display_percentage = sprintf("%.0f%%", percentage + 0)
+
+            if (state == "charging" || state == "pending-charge") {
+                print display_percentage " charging"
+                exit
+            }
+
+            if (state == "fully-charged") {
+                print display_percentage " full"
+                exit
+            }
+
+            if (state != "discharging" && state != "pending-discharge") {
+                exit
+            }
+
+            split(time_to_empty, time_parts, /[[:space:]]+/)
+            amount = time_parts[1]
+            unit = time_parts[2]
+            if (amount !~ /^[0-9]+([.][0-9]+)?$/) {
+                exit
+            }
+
+            if (unit ~ /^day/) {
+                minutes = amount * 24 * 60
+            } else if (unit ~ /^hour/) {
+                minutes = amount * 60
+            } else if (unit ~ /^minute/) {
+                minutes = amount
+            } else {
+                exit
+            }
+
+            minutes = int(minutes + 0.5)
+            printf "%s %d:%02d\n", display_percentage, int(minutes / 60), minutes % 60
+        }
+    '
