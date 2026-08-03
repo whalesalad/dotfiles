@@ -5,3 +5,7 @@ workspace titan \
 workspace pipeline \
   root_dir="$HOME/code/ocean/data-pipeline" \
   pyenv="pipeline"
+
+workspace homelab \
+  root_dir="$HOME/code/homelab" \
+  pyenv="homelab"
