@@ -94,6 +94,7 @@ wait_for_file() {
 
 mkdir -p \
     "$TEST_TMP/bin" \
+    "$TEST_TMP/pyenv-root/bin" \
     "$TEST_TMP/alpha" \
     "$TEST_TMP/beta" \
     "$TEST_TMP/bad" \
@@ -120,8 +121,8 @@ printf '%s\n' \
     '    ;;' \
     '  *) exit 1 ;;' \
     'esac' \
-    > "$TEST_TMP/bin/pyenv"
-chmod +x "$TEST_TMP/bin/pyenv"
+    > "$TEST_TMP/pyenv-root/bin/pyenv"
+chmod +x "$TEST_TMP/pyenv-root/bin/pyenv"
 
 printf '%s\n' \
     "workspace alpha root_dir=\"$TEST_TMP/alpha\" pyenv=\"fake\"" \
@@ -143,7 +144,9 @@ export T_TMUX_CONFIG="$TEST_TMP/tmux.conf"
 export T_CONFIG_FILE="$TEST_TMP/workspaces.sh"
 export T_NO_ATTACH=1
 export FAKE_PYENV_PREFIX="$TEST_TMP/fake-venv"
-export PATH="$TEST_TMP/bin:$FAKE_PYENV_PREFIX/bin:$PATH"
+export PYENV_ROOT="$TEST_TMP/pyenv-root"
+ORIGINAL_PATH=$PATH
+export PATH="/usr/bin:/bin"
 export PYENV_VERSION=fake
 export PYENV_ACTIVATE_SHELL=1
 export PYENV_VIRTUAL_ENV=$FAKE_PYENV_PREFIX
@@ -151,6 +154,13 @@ export VIRTUAL_ENV=$FAKE_PYENV_PREFIX
 export PROJECT_TOKEN='hello world'
 
 "$T_BIN" alpha
+
+assert_contains \
+    "$(session_environment alpha PATH)" \
+    "$TEST_TMP/pyenv-root/bin" \
+    'pyenv is discovered from PYENV_ROOT without shell initialization'
+
+export PATH="$TEST_TMP/bin:$PYENV_ROOT/bin:$FAKE_PYENV_PREFIX/bin:$ORIGINAL_PATH"
 
 assert_equal \
     'PROJECT_TOKEN=hello world' \
