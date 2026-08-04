@@ -14,3 +14,6 @@ else
 fi
 
 unset DOTFILES_ZSH_DIR
+
+# Machine-local environment variables (intentionally outside this repository).
+[[ -r "$HOME/.env" ]] && source "$HOME/.env"
