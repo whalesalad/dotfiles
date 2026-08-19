@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+# Completed transcripts can contain sensitive text. Keep both the directory
+# and newly created files private to the current user.
+umask 077
+
+transcript=$(cat)
+data_dir=${XDG_DATA_HOME:-"$HOME/.local/share"}
+log_dir="$data_dir/voxtype/transcripts"
+log_file="$log_dir/transcripts.log"
+
+mkdir -p "$log_dir"
+chmod 700 "$log_dir"
+touch "$log_file"
+chmod 600 "$log_file"
+
+{
+    printf '\n[%s]\n' "$(date --iso-8601=seconds)"
+    printf '%s\n' "$transcript"
+} >> "$log_file"
+
+# A post-processor must return the text that Voxtype should place on the
+# clipboard. Do not include the timestamp or any diagnostic output here.
+printf '%s' "$transcript"

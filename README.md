@@ -5,6 +5,10 @@
 1. Ensure that `zsh` is installed. Don't worry about setting it as your shell, ohmyzsh will do that.
 2. Install ohmyzsh: https://ohmyz.sh/#install
 
+Machine setup runbooks:
+
+- [Voxtype push-to-talk dictation](docs/voxtype-push-to-talk-runbook.md)
+
 Clone this locally and ensure the `~/.zshrc` contains something like this:
 
 ```

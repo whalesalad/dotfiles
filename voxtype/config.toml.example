@@ -1,0 +1,53 @@
+# Shared Voxtype push-to-talk profile.
+# Install as ~/.config/voxtype/config.toml and keep machine-specific audio
+# selection in the operating system by using device = "default".
+
+state_file = "auto"
+engine = "whisper"
+
+[hotkey]
+key = "INSERT"
+modifiers = []
+mode = "push_to_talk"
+enabled = true
+
+[audio]
+device = "default"
+sample_rate = 16000
+max_duration_secs = 600
+
+[whisper]
+model = "base.en"
+language = "en"
+translate = false
+mode = "local"
+
+[output]
+# Clipboard mode is intentional. Direct typing and automatic paste can emit
+# destructive synthetic input on some KDE Wayland applications.
+mode = "clipboard"
+fallback_to_clipboard = true
+auto_submit = false
+
+[output.post_process]
+command = "/usr/local/bin/voxtype-journal"
+timeout_ms = 5000
+trim = false
+fallback_on_empty = true
+
+[output.notification]
+on_recording_start = false
+on_recording_stop = false
+on_transcription = true
+
+[text]
+spoken_punctuation = false
+smart_auto_submit = false
+
+[osd]
+enabled = true
+frontend = "gtk4"
+position = "bottom-center"
+
+[status]
+icon_theme = "emoji"
