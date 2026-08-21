@@ -13,6 +13,9 @@ else
   done
 fi
 
+# Apply prompt overrides after Oh My Zsh has loaded its selected theme.
+[[ -r "$DOTFILES_ZSH_DIR/prompt.zsh" ]] && source "$DOTFILES_ZSH_DIR/prompt.zsh"
+
 unset DOTFILES_ZSH_DIR
 
 # Machine-local environment variables (intentionally outside this repository).
