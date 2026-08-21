@@ -61,7 +61,7 @@ curl -fLO \
   "https://github.com/peteonrails/voxtype/releases/download/v${VOXTYPE_VERSION}/voxtype-${VOXTYPE_VERSION}-1.x86_64.rpm.asc"
 
 gpg --keyserver hkps://keys.openpgp.org \
-  --recv-keys E79F5BAF8CD51A806AA27DBB7DA2709247D75BC6
+  --recv-keys 9CCF7915B750CAE8B095ED1AA3FC9F33FD209279
 gpg --verify \
   "voxtype-${VOXTYPE_VERSION}-1.x86_64.rpm.asc" \
   "voxtype-${VOXTYPE_VERSION}-1.x86_64.rpm"
@@ -69,10 +69,36 @@ sudo dnf install "./voxtype-${VOXTYPE_VERSION}-1.x86_64.rpm"
 voxtype --version
 ```
 
-The verification must report a good signature made by fingerprint
-`E79F5BAF8CD51A806AA27DBB7DA2709247D75BC6`. A warning that the key is not
-personally certified is normal; a bad signature is not. Stop if the fingerprint differs or the
-signature is bad.
+The verification must report a good signature made by the dedicated release-signing fingerprint
+`9CCF7915B750CAE8B095ED1AA3FC9F33FD209279`. Upstream cross-signs that key with the offline
+maintainer fingerprint `E79F5BAF8CD51A806AA27DBB7DA2709247D75BC6`. A warning that the key is
+not personally certified is normal; a bad signature is not. Stop if the release-signing
+fingerprint differs or the signature is bad.
+
+The Fedora RPM does not currently contain the GTK OSD executables even though the shared profile
+enables that frontend. Download, verify, and install the two matching release assets:
+
+```bash
+for VOXTYPE_OSD_ASSET in \
+  "voxtype-${VOXTYPE_VERSION}-linux-x86_64-osd" \
+  "voxtype-${VOXTYPE_VERSION}-linux-x86_64-osd-gtk4"
+do
+  curl -fLO \
+    "https://github.com/peteonrails/voxtype/releases/download/v${VOXTYPE_VERSION}/${VOXTYPE_OSD_ASSET}"
+  curl -fLO \
+    "https://github.com/peteonrails/voxtype/releases/download/v${VOXTYPE_VERSION}/${VOXTYPE_OSD_ASSET}.asc"
+  gpg --verify "${VOXTYPE_OSD_ASSET}.asc" "${VOXTYPE_OSD_ASSET}"
+done
+
+sudo install -m 0755 \
+  "voxtype-${VOXTYPE_VERSION}-linux-x86_64-osd" \
+  /usr/local/bin/voxtype-osd
+sudo install -m 0755 \
+  "voxtype-${VOXTYPE_VERSION}-linux-x86_64-osd-gtk4" \
+  /usr/local/bin/voxtype-osd-gtk4
+```
+
+Both detached signatures must be good signatures from the same release-signing fingerprint.
 
 ### 3. Grant access to the push-to-talk key
 
@@ -128,6 +154,22 @@ voxtype --config "$HOME/.config/voxtype/config.toml" config
 
 The last command must parse the file and show `INSERT`, `push_to_talk`, `base.en`, and
 `clipboard`. It may also show defaults omitted from the canonical file.
+
+#### Viper hotkey override
+
+The shared configuration keeps `INSERT` so Lucifer retains its established behavior. Viper's
+Framework Laptop 13 Pro gear key emits Linux input event `KEY_MEDIA`; override only Viper's live
+configuration after installing the shared file:
+
+```bash
+sed -i 's/^key = "INSERT"$/key = "MEDIA"/' "$HOME/.config/voxtype/config.toml"
+voxtype --config "$HOME/.config/voxtype/config.toml" config
+```
+
+The resolved configuration must show `MEDIA` on Viper. Toshy exclusively grabs Viper's physical
+keyboard and forwards unhandled keys through its XWayKeyz virtual keyboard, so validate the gear
+key with Toshy running during acceptance. Do not change the tracked shared key to `MEDIA` or copy
+Viper's live override onto Lucifer.
 
 ### 6. Select the microphone without hard-coding hardware
 

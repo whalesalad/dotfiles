@@ -32,8 +32,6 @@ auto_submit = false
 [output.post_process]
 command = "/usr/local/bin/voxtype-journal"
 timeout_ms = 5000
-trim = false
-fallback_on_empty = true
 
 [output.notification]
 on_recording_start = false
