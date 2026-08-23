@@ -15,7 +15,20 @@ local function open_files()
   pickers.files()
 end
 
+local function toggle_sidebar()
+  leave_insert_mode()
+  require('nvim-tree.api').tree.toggle {
+    path = vim.g.whalesalad_project_root,
+    find_file = true,
+    update_root = false,
+    focus = true,
+  }
+end
+
 map({ 'n', 'i' }, '<C-p>', open_files, 'Find project files')
+-- Toshy maps the physical Mac Command key to Control in terminal apps.
+map({ 'n', 'i' }, '<C-b>', toggle_sidebar, 'Toggle project sidebar')
+map('n', '<leader>e', toggle_sidebar, 'Toggle project sidebar')
 map('n', '<leader>p', pickers.commands, 'Command palette')
 map('n', '<leader>b', pickers.buffers, 'Open files')
 map('n', '<leader>g', pickers.git_changes, 'Review changed files')
@@ -40,4 +53,3 @@ map('x', '<C-x>', '"+d', 'Cut selection')
 map('i', '<C-v>', '<C-r>+', 'Paste clipboard')
 
 map('n', '<Esc>', '<cmd>nohlsearch<CR>', 'Clear search highlight')
-

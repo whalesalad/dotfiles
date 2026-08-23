@@ -15,6 +15,7 @@ nvim
 
 | Key | Action |
 | --- | --- |
+| `Command-B` | Toggle the project sidebar (through Toshy in WezTerm) |
 | `Ctrl-P` | Find a project file |
 | `Space` then `p` | Find and run an editor command |
 | `Space` then `g` | Review changed files with a diff preview |
@@ -31,3 +32,7 @@ the terminal's raw text selection instead.
 
 Plugins never update on startup. Run `:PackUpdate` to open Neovim's review
 buffer when you intentionally want to update them.
+
+Markdown is rendered in normal mode, including pipe tables. Enter insert mode
+to expose the underlying Markdown around the cursor, or run
+`:RenderMarkdown toggle` to toggle rendering for the current buffer.

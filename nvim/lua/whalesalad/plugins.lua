@@ -9,6 +9,9 @@ vim.pack.add({
   github 'lewis6991/gitsigns.nvim',
   github 'folke/which-key.nvim',
   github 'akinsho/bufferline.nvim',
+  github 'nvim-tree/nvim-tree.lua',
+  github 'nvim-mini/mini.icons',
+  github 'MeanderingProgrammer/render-markdown.nvim',
   {
     src = github 'saghen/blink.cmp',
     -- Blink v2 is intentionally excluded while it is under active development.
@@ -36,6 +39,90 @@ require('which-key').setup {
     { '<leader>f', group = 'find' },
     { '<leader>g', group = 'git changes' },
   },
+}
+
+local project_root = vim.g.whalesalad_project_root
+
+require('nvim-tree').setup {
+  disable_netrw = true,
+  hijack_netrw = true,
+  sync_root_with_cwd = false,
+  respect_buf_cwd = false,
+  hijack_cursor = true,
+  update_focused_file = {
+    enable = true,
+    update_root = false,
+  },
+  view = {
+    side = 'left',
+    width = 34,
+    preserve_window_proportions = true,
+  },
+  renderer = {
+    root_folder_label = false,
+    highlight_git = 'name',
+    highlight_opened_files = 'name',
+    indent_markers = { enable = true },
+    icons = {
+      show = {
+        file = false,
+        folder = true,
+        folder_arrow = true,
+        git = true,
+        modified = true,
+        diagnostics = false,
+      },
+      glyphs = {
+        git = {
+          unstaged = '~',
+          staged = '+',
+          unmerged = '!',
+          renamed = '»',
+          untracked = '?',
+          deleted = '×',
+          ignored = '·',
+        },
+      },
+    },
+  },
+  filters = {
+    dotfiles = false,
+    git_ignored = false,
+    custom = { '^.git$' },
+  },
+  git = {
+    enable = true,
+    ignore = false,
+    show_on_dirs = true,
+  },
+  actions = {
+    open_file = {
+      quit_on_open = false,
+      resize_window = true,
+      window_picker = { enable = false },
+    },
+  },
+}
+
+require('mini.icons').setup {}
+
+require('render-markdown').setup {
+  render_modes = { 'n', 'c', 't' },
+  sign = { enabled = false },
+  heading = { sign = false },
+  code = {
+    sign = false,
+    width = 'block',
+    left_pad = 1,
+    right_pad = 1,
+  },
+  pipe_table = {
+    preset = 'round',
+    border_enabled = true,
+  },
+  html = { enabled = false },
+  latex = { enabled = false },
+  yaml = { enabled = false },
 }
 
 local palette = {
@@ -75,6 +162,14 @@ bufferline.setup {
     color_icons = false,
     diagnostics = false,
     always_show_bufferline = true,
+    offsets = {
+      {
+        filetype = 'NvimTree',
+        text = vim.fn.fnamemodify(project_root, ':t'),
+        highlight = 'Directory',
+        separator = true,
+      },
+    },
   },
   highlights = {
     fill = { bg = palette.background },
@@ -108,4 +203,3 @@ require('blink.cmp').setup {
 vim.api.nvim_create_user_command('PackUpdate', function()
   vim.pack.update()
 end, { desc = 'Review and apply plugin updates' })
-
