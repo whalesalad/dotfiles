@@ -9,3 +9,6 @@ workspace pipeline \
 workspace homelab \
   root_dir="$HOME/code/homelab" \
   pyenv="homelab"
+
+workspace sitrep \
+  root_dir="$HOME/code/ocean/cloud-sitrep" 
