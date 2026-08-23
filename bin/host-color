@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# Return a stable, high-contrast xterm 256-color index for a hostname.
+fallback=208
+host=${1:-}
+
+if [ -z "$host" ] || ! command -v cksum >/dev/null 2>&1; then
+    printf '%s\n' "$fallback"
+    exit 0
+fi
+
+short_host=${host%%.*}
+normalized_host=$(printf '%s' "$short_host" | LC_ALL=C tr '[:upper:]' '[:lower:]' 2>/dev/null) || normalized_host=
+
+if [ -z "$normalized_host" ]; then
+    printf '%s\n' "$fallback"
+    exit 0
+fi
+
+checksum_output=$(printf '%s' "$normalized_host" | cksum 2>/dev/null) || checksum_output=
+checksum=${checksum_output%%[[:space:]]*}
+
+case $checksum in
+    ''|*[!0-9]*)
+        printf '%s\n' "$fallback"
+        exit 0
+        ;;
+esac
+
+case $((checksum % 12)) in
+    0) color=196 ;;
+    1) color=197 ;;
+    2) color=198 ;;
+    3) color=201 ;;
+    4) color=202 ;;
+    5) color=208 ;;
+    6) color=214 ;;
+    7) color=220 ;;
+    8) color=135 ;;
+    9) color=39 ;;
+    10) color=45 ;;
+    11) color=82 ;;
+esac
+
+printf '%s\n' "$color"
