@@ -9,6 +9,18 @@ Machine setup runbooks:
 
 - [Voxtype push-to-talk dictation](docs/voxtype-push-to-talk-runbook.md)
 
+### Neovim
+
+The Neovim config is intentionally small and project-scoped. Link it into the
+standard config location:
+
+```sh
+mkdir -p ~/.config
+ln -s ~/code/dotfiles/nvim ~/.config/nvim
+```
+
+See [`nvim/README.md`](nvim/README.md) for the core controls.
+
 Clone this locally and ensure the `~/.zshrc` contains something like this:
 
 ```
