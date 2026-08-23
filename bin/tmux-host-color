@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Resolve the shared hostname color and publish it to the current tmux server.
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P) || exit 0
+color=$("$script_dir/host-color" "${1:-}" 2>/dev/null) || color=208
+
+case $color in
+    ''|*[!0-9]*) color=208 ;;
+esac
+
+if [ "$color" -gt 255 ]; then
+    color=208
+fi
+
+command tmux set-option -gq @host-color "$color" 2>/dev/null || true

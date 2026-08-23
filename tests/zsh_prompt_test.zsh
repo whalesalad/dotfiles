@@ -33,6 +33,8 @@ build_prompt() { : }
 
 source "$REPO_ROOT/zsh/prompt.zsh"
 
+assert_equal "$REPO_ROOT/bin/host-color" "$AGNOSTER_HOST_COLOR_COMMAND" 'prompt resolves the shared color helper'
+
 _agnoster_context_text michael
 assert_equal '%m' "$REPLY" 'michael context contains only the hostname'
 
@@ -62,6 +64,12 @@ _agnoster_host_foreground viper
 assert_equal 208 "$REPLY" 'missing cksum uses the bright orange fallback'
 path=("${saved_path[@]}")
 rehash
+
+saved_color_command=$AGNOSTER_HOST_COLOR_COMMAND
+AGNOSTER_HOST_COLOR_COMMAND=/path/without/host-color
+_agnoster_host_foreground viper
+assert_equal 208 "$REPLY" 'missing color helper uses the bright orange fallback'
+AGNOSTER_HOST_COLOR_COMMAND=$saved_color_command
 
 captured_segment=()
 prompt_segment() {

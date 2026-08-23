@@ -1,20 +1,19 @@
 # Preserve Agnoster's prompt while skipping unused, synchronous VCS probes.
 # Mercurial and Bazaar startup checks noticeably delay every prompt redraw.
 if [[ "${ZSH_THEME:-}" == "agnoster" ]] && (( $+functions[build_prompt] )); then
-  # Pick a stable, high-contrast foreground from the short hostname. Keep the
-  # palette intentionally bright so every entry remains legible on dark themes.
-  _agnoster_host_foreground() {
-    local normalized_host="${(L)${1%%.*}}"
-    local checksum_output checksum
-    local -a palette=(196 197 198 201 202 208 214 220 135 39 45 82)
+  typeset -g AGNOSTER_HOST_COLOR_COMMAND="${${(%):-%N}:A:h:h}/bin/host-color"
 
-    if (( $+commands[cksum] )); then
-      checksum_output=$(print -rn -- "$normalized_host" | command cksum 2>/dev/null) || checksum_output=''
-      checksum=${checksum_output%%[[:space:]]*}
+  # Resolve the shared host color once at shell startup. Keep a local fallback
+  # so a missing or broken helper can never prevent prompt rendering.
+  _agnoster_host_foreground() {
+    local color
+
+    if [[ -x "$AGNOSTER_HOST_COLOR_COMMAND" ]]; then
+      color=$("$AGNOSTER_HOST_COLOR_COMMAND" "$1" 2>/dev/null) || color=''
     fi
 
-    if [[ "$checksum" == <-> ]]; then
-      REPLY=${palette[$((checksum % ${#palette} + 1))]}
+    if [[ "$color" == <-> ]] && (( color >= 0 && color <= 255 )); then
+      REPLY=$color
     else
       REPLY=208
     fi

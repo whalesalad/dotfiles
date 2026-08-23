@@ -35,15 +35,16 @@ background.
   shell startup while retaining the local fallback color.
 - Replace tmux's green `user@host` status-left value with a native tmux format
   that suppresses `michael@` and always includes `#{host_short}`.
-- Use tmux's `#()` status command expansion to obtain the shared color. It runs
-  on the existing 15-second status interval alongside the current system
-  metric commands.
+- Initialize a tmux `@host-color` option to orange (`208`), then populate it
+  once at config load through `bin/tmux-host-color`, a non-blocking loader that
+  calls the shared helper and quietly updates the server-global option. Render
+  the option directly inside the foreground style.
 - Keep host-specific files under `tmux/hosts/` unchanged.
 
 ## Failure Behavior
 
-If the helper is absent or produces no usable output, zsh uses orange `208`.
-The tmux status must continue showing an uncolored hostname rather than hiding
+If the helper is absent or produces no usable output, zsh and tmux use orange
+`208`. The tmux status must continue showing the hostname rather than hiding
 the identity or displaying command errors.
 
 ## Verification
