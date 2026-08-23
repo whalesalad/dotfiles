@@ -30,6 +30,10 @@ map({ 'n', 'i' }, '<C-p>', open_files, 'Find project files')
 map({ 'n', 'i' }, '<C-b>', toggle_sidebar, 'Toggle project sidebar')
 map('n', '<leader>e', toggle_sidebar, 'Toggle project sidebar')
 map('n', '<leader>p', pickers.commands, 'Command palette')
+map({ 'n', 'i' }, '<C-S-p>', function()
+  leave_insert_mode()
+  pickers.commands()
+end, 'Command palette')
 map('n', '<leader>b', pickers.buffers, 'Open files')
 map('n', '<leader>g', pickers.git_changes, 'Review changed files')
 map('n', '<leader>/', pickers.grep, 'Search project text')
@@ -39,12 +43,22 @@ map('n', '[b', '<cmd>BufferLineCyclePrev<CR>', 'Previous open file')
 map('n', ']b', '<cmd>BufferLineCycleNext<CR>', 'Next open file')
 map('n', '<M-Left>', '<cmd>BufferLineCyclePrev<CR>', 'Previous open file')
 map('n', '<M-Right>', '<cmd>BufferLineCycleNext<CR>', 'Next open file')
+map({ 'n', 'i' }, '<C-PageUp>', function()
+  leave_insert_mode()
+  vim.cmd 'BufferLineCyclePrev'
+end, 'Previous open file')
+map({ 'n', 'i' }, '<C-PageDown>', function()
+  leave_insert_mode()
+  vim.cmd 'BufferLineCycleNext'
+end, 'Next open file')
 map('n', '<leader>w', function()
   _G.whalesalad_close_buffer(vim.api.nvim_get_current_buf())
 end, 'Close current file')
 
 map('n', '<C-s>', '<cmd>update<CR>', 'Save file')
 map('i', '<C-s>', '<C-o><cmd>update<CR>', 'Save file')
+map('n', '<C-S-s>', '<cmd>update<CR>', 'Save file')
+map('i', '<C-S-s>', '<C-o><cmd>update<CR>', 'Save file')
 
 -- Mouse dragging creates a Vim visual selection. These familiar shortcuts
 -- move that selection through the desktop clipboard.

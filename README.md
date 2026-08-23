@@ -19,7 +19,8 @@ mkdir -p ~/.config
 ln -s ~/code/dotfiles/nvim ~/.config/nvim
 ```
 
-See [`nvim/README.md`](nvim/README.md) for the core controls.
+See [`nvim/README.md`](nvim/README.md) for the usage guide and
+[`nvim/DEVELOPING.md`](nvim/DEVELOPING.md) for maintenance and extension.
 
 Clone this locally and ensure the `~/.zshrc` contains something like this:
 

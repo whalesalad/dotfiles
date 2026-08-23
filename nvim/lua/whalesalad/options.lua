@@ -23,7 +23,9 @@ opt.tabstop = 2
 
 opt.completeopt = { 'menu', 'menuone', 'noselect' }
 opt.laststatus = 3
-opt.showmode = false
+-- Keep the built-in INSERT/REPLACE indicator: this setup is intentionally
+-- friendly to people still learning Neovim's modes.
+opt.showmode = true
 opt.shortmess:append 'I'
 opt.updatetime = 250
 opt.timeoutlen = 400
@@ -42,4 +44,3 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
-
