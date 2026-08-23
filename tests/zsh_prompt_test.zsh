@@ -33,16 +33,10 @@ build_prompt() { : }
 
 source "$REPO_ROOT/zsh/prompt.zsh"
 
-if _agnoster_context_text michael ''; then
-  fail 'local michael context is hidden'
-else
-  pass 'local michael context is hidden'
-fi
+_agnoster_context_text michael
+assert_equal '%m' "$REPLY" 'michael context contains only the hostname'
 
-_agnoster_context_text michael '10.0.0.1 12345 22'
-assert_equal '%m' "$REPLY" 'SSH michael context contains only the hostname'
-
-_agnoster_context_text root ''
+_agnoster_context_text root
 assert_equal '%n@%m' "$REPLY" 'non-michael context contains user and hostname'
 
 _agnoster_host_foreground viper.mk3.dev
@@ -74,10 +68,10 @@ prompt_segment() {
   captured_segment=("$@")
 }
 
-SSH_CLIENT='10.0.0.1 12345 22'
+unset SSH_CLIENT
 prompt_context
 assert_equal black "$captured_segment[1]" 'context retains the dark Agnoster background'
 assert_equal "$AGNOSTER_CONTEXT_HOST_FG" "$captured_segment[2]" 'context uses the host-derived foreground'
-assert_equal '%m' "$captured_segment[3]" 'context suppresses michael in the rendered segment'
+assert_equal '%m' "$captured_segment[3]" 'local context always renders the hostname'
 
 print -r -- "1..$ASSERTIONS"

@@ -20,14 +20,12 @@ if [[ "${ZSH_THEME:-}" == "agnoster" ]] && (( $+functions[build_prompt] )); then
     fi
   }
 
-  # Return the Agnoster prompt escape for the requested user/session. A local
-  # shell as michael has no context segment; SSH still shows the destination.
+  # Return the Agnoster prompt escape for the requested user. The hostname is
+  # always present; michael is omitted because that username is implied.
   _agnoster_context_text() {
     local username="$1"
-    local ssh_client="$2"
 
     if [[ "$username" == "michael" ]]; then
-      [[ -n "$ssh_client" ]] || return 1
       REPLY='%m'
     else
       REPLY='%n@%m'
@@ -41,10 +39,9 @@ if [[ "${ZSH_THEME:-}" == "agnoster" ]] && (( $+functions[build_prompt] )); then
   prompt_context() {
     local context
 
-    if _agnoster_context_text "$USERNAME" "${SSH_CLIENT:-}"; then
-      context=$REPLY
-      prompt_segment "$AGNOSTER_CONTEXT_BG" "$AGNOSTER_CONTEXT_HOST_FG" "$context"
-    fi
+    _agnoster_context_text "$USERNAME"
+    context=$REPLY
+    prompt_segment "$AGNOSTER_CONTEXT_BG" "$AGNOSTER_CONTEXT_HOST_FG" "$context"
   }
 
   build_prompt() {

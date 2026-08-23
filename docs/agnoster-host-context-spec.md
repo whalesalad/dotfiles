@@ -2,9 +2,9 @@
 
 ## Decision
 
-Make remote hosts visually distinct in the Agnoster prompt by assigning the
-context text a deterministic bright foreground color derived from the short
-hostname. Keep the context segment's existing dark background. Keep the
+Make hosts visually distinct in every Agnoster prompt by assigning the context
+text a deterministic bright foreground color derived from the short hostname.
+Keep the context segment's existing dark background. Keep the
 implementation in `zsh/prompt.zsh`, alongside the existing Agnoster override,
 and compute the color once when the shell starts.
 
@@ -12,13 +12,12 @@ and compute the color once when the shell starts.
 
 | Session | Current user | Context segment |
 | --- | --- | --- |
-| Local | `michael` | Hidden |
-| SSH | `michael` | `hostname` |
+| Local or SSH | `michael` | `hostname` |
 | Local or SSH | Any other user | `user@hostname` |
 
-The literal username `michael` is omitted because it is implied. The complete
-visible context string uses the host-derived foreground color on Agnoster's
-existing dark context background.
+The hostname is always present. The literal username `michael` is omitted
+because it is implied. The complete visible context string uses the
+host-derived foreground color on Agnoster's existing dark context background.
 
 ## Color Selection
 
@@ -44,7 +43,8 @@ vendored or installed Oh My Zsh theme.
 
 ## Verification
 
-- Test all three display rules with a stubbed `prompt_segment`.
+- Test both username display rules and verify a local prompt renders the
+  hostname context segment.
 - Verify the same hostname always selects the same palette entry.
 - Verify representative different hostnames can select different entries.
 - Verify every selected value belongs to the approved bright palette.
