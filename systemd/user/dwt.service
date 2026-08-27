@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable While Typing — T2 trackpad suppressor
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/python3 %h/.config/scripts/dwt.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

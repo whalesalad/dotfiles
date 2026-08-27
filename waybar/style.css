@@ -1,0 +1,137 @@
+/* Nord palette */
+@define-color bg       #2e3440;
+@define-color bg1      #3b4252;
+@define-color bg2      #434c5e;
+@define-color bg3      #4c566a;
+@define-color fg       #d8dee9;
+@define-color fg2      #e5e9f0;
+@define-color blue     #81a1c1;
+@define-color cyan     #88c0d0;
+@define-color green    #a3be8c;
+@define-color yellow   #ebcb8b;
+@define-color orange   #d08770;
+@define-color red      #bf616a;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans", monospace;
+    font-size: 13px;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar {
+    background: @bg;
+    color: @fg;
+    border-radius: 8px;
+}
+
+/* Workspaces — individual pills matching right-side style */
+#workspaces {
+    background: transparent;
+    padding: 0;
+}
+
+#workspaces button {
+    background: @bg1;
+    color: @bg3;
+    padding: 0 12px;
+    margin: 4px 2px;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    box-shadow: none;
+}
+
+#workspaces button:hover {
+    background: @bg2;
+    color: @fg;
+    box-shadow: none;
+}
+
+#workspaces button.active {
+    background: @bg1;
+    color: @cyan;
+    font-weight: bold;
+    box-shadow: none;
+}
+
+#workspaces button.urgent {
+    background: @bg1;
+    color: @red;
+    box-shadow: none;
+}
+
+/* Window title */
+#window {
+    color: @fg;
+    padding: 0 12px;
+    font-style: italic;
+}
+
+/* Right modules shared */
+#clock,
+#battery,
+#network,
+#pulseaudio,
+#backlight,
+#memory,
+#tray {
+    background: @bg1;
+    padding: 0 12px;
+    margin: 4px 2px;
+    border-radius: 8px;
+}
+
+#clock {
+    color: @cyan;
+    font-weight: bold;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.warning {
+    color: @yellow;
+}
+
+#battery.critical {
+    color: @red;
+    animation: blink 1s step-end infinite;
+}
+
+#battery.charging {
+    color: @green;
+}
+
+@keyframes blink {
+    to { color: @bg; background: @red; }
+}
+
+#network {
+    color: @blue;
+}
+
+#network.disconnected {
+    color: @bg3;
+}
+
+#pulseaudio {
+    color: @fg;
+}
+
+#pulseaudio.muted {
+    color: @bg3;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#memory {
+    color: @fg;
+}
+
+#tray {
+    padding: 0 8px;
+}
