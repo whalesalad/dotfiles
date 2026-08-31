@@ -12,3 +12,6 @@ workspace homelab \
 
 workspace sitrep \
   root_dir="$HOME/code/ocean/cloud-sitrep" 
+
+workspace pulsar \
+  root_dir="$HOME/code/ocean/pulsar"
