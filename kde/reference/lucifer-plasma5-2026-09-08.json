@@ -1,0 +1,202 @@
+{
+  "host": "lucifer",
+  "plasma": "5.27.5",
+  "date": "2026-09-08",
+  "order": [
+    44,
+    37,
+    35,
+    43,
+    38
+  ],
+  "sections": {
+    "Containments][2][Applets][35": {
+      "immutability": "1",
+      "plugin": "org.kde.plasma.systemmonitor.memory"
+    },
+    "Containments][2][Applets][35][Configuration": {
+      "CurrentPreset": "org.kde.plasma.systemmonitor",
+      "PreloadWeight": "100"
+    },
+    "Containments][2][Applets][35][Configuration][Appearance": {
+      "chartFace": "org.kde.ksysguard.piechart",
+      "title": "Memory Usage"
+    },
+    "Containments][2][Applets][35][Configuration][ConfigDialog": {
+      "DialogHeight": "540",
+      "DialogWidth": "720"
+    },
+    "Containments][2][Applets][35][Configuration][SensorColors": {
+      "memory/physical/used": "197,14,210"
+    },
+    "Containments][2][Applets][35][Configuration][Sensors": {
+      "highPrioritySensorIds": "[\"memory/physical/used\"]",
+      "lowPrioritySensorIds": "[\"memory/physical/total\"]",
+      "totalSensors": "[\"memory/physical/usedPercent\"]"
+    },
+    "Containments][2][Applets][37": {
+      "immutability": "1",
+      "plugin": "org.kde.plasma.systemmonitor.cpu"
+    },
+    "Containments][2][Applets][37][Configuration": {
+      "CurrentPreset": "org.kde.plasma.systemmonitor",
+      "PreloadWeight": "100"
+    },
+    "Containments][2][Applets][37][Configuration][Appearance": {
+      "chartFace": "org.kde.ksysguard.piechart",
+      "title": "Total CPU Use"
+    },
+    "Containments][2][Applets][37][Configuration][ConfigDialog": {
+      "DialogHeight": "510",
+      "DialogWidth": "680"
+    },
+    "Containments][2][Applets][37][Configuration][SensorColors": {
+      "cpu/all/averageFrequency": "0,255,127",
+      "cpu/all/usage": "197,14,210",
+      "cpu/cpu\\requency": "59,14,210",
+      "cpu/cpu ystem": "193,210,14",
+      "cpu/cpu0/frequency": "210,14,205",
+      "cpu/cpu0/system": "18,210,14",
+      "cpu/cpu1/frequency": "210,14,187",
+      "cpu/cpu1/system": "14,210,28",
+      "cpu/cpu10/frequency": "210,14,24",
+      "cpu/cpu10/system": "14,210,191",
+      "cpu/cpu11/frequency": "210,22,14",
+      "cpu/cpu11/system": "14,210,209",
+      "cpu/cpu12/frequency": "210,40,14",
+      "cpu/cpu12/system": "14,193,210",
+      "cpu/cpu13/frequency": "210,58,14",
+      "cpu/cpu13/system": "14,175,210",
+      "cpu/cpu14/frequency": "210,76,14",
+      "cpu/cpu14/system": "14,157,210",
+      "cpu/cpu15/frequency": "210,94,14",
+      "cpu/cpu15/system": "14,139,210",
+      "cpu/cpu16/frequency": "210,113,14",
+      "cpu/cpu16/system": "14,120,210",
+      "cpu/cpu17/frequency": "210,131,14",
+      "cpu/cpu17/system": "14,102,210",
+      "cpu/cpu18/frequency": "210,149,14",
+      "cpu/cpu18/system": "14,84,210",
+      "cpu/cpu19/frequency": "210,167,14",
+      "cpu/cpu19/system": "14,66,210",
+      "cpu/cpu2/frequency": "210,14,169",
+      "cpu/cpu2/system": "14,210,46",
+      "cpu/cpu20/frequency": "210,185,14",
+      "cpu/cpu20/system": "14,48,210",
+      "cpu/cpu21/frequency": "210,203,14",
+      "cpu/cpu21/system": "14,30,210",
+      "cpu/cpu22/frequency": "199,210,14",
+      "cpu/cpu22/system": "16,14,210",
+      "cpu/cpu23/frequency": "181,210,14",
+      "cpu/cpu23/system": "34,14,210",
+      "cpu/cpu24/frequency": "163,210,14",
+      "cpu/cpu24/system": "52,14,210",
+      "cpu/cpu25/frequency": "145,210,14",
+      "cpu/cpu25/system": "70,14,210",
+      "cpu/cpu26/frequency": "127,210,14",
+      "cpu/cpu26/system": "88,14,210",
+      "cpu/cpu27/frequency": "108,210,14",
+      "cpu/cpu27/system": "107,14,210",
+      "cpu/cpu28/frequency": "90,210,14",
+      "cpu/cpu28/system": "125,14,210",
+      "cpu/cpu29/frequency": "72,210,14",
+      "cpu/cpu29/system": "143,14,210",
+      "cpu/cpu3/frequency": "210,14,151",
+      "cpu/cpu3/system": "14,210,64",
+      "cpu/cpu30/frequency": "54,210,14",
+      "cpu/cpu30/system": "161,14,210",
+      "cpu/cpu31/frequency": "36,210,14",
+      "cpu/cpu31/system": "179,14,210",
+      "cpu/cpu4/frequency": "210,14,133",
+      "cpu/cpu4/system": "14,210,82",
+      "cpu/cpu5/frequency": "210,14,114",
+      "cpu/cpu5/system": "14,210,101",
+      "cpu/cpu6/frequency": "210,14,96",
+      "cpu/cpu6/system": "14,210,119",
+      "cpu/cpu7/frequency": "210,14,78",
+      "cpu/cpu7/system": "14,210,137",
+      "cpu/cpu8/frequency": "210,14,60",
+      "cpu/cpu8/system": "14,210,155",
+      "cpu/cpu9/frequency": "210,14,42",
+      "cpu/cpu9/system": "14,210,173"
+    },
+    "Containments][2][Applets][37][Configuration][Sensors": {
+      "highPrioritySensorIds": "[\"cpu/all/usage\"]",
+      "lowPrioritySensorIds": "[]",
+      "totalSensors": "[\"cpu/all/usage\"]"
+    },
+    "Containments][2][Applets][38": {
+      "immutability": "1",
+      "plugin": "org.kde.plasma.systemmonitor"
+    },
+    "Containments][2][Applets][38][Configuration": {
+      "CurrentPreset": "org.kde.plasma.systemmonitor",
+      "PreloadWeight": "100"
+    },
+    "Containments][2][Applets][38][Configuration][Appearance": {
+      "chartFace": "org.kde.ksysguard.linechart",
+      "title": "CPU Temp"
+    },
+    "Containments][2][Applets][38][Configuration][ConfigDialog": {
+      "DialogHeight": "540",
+      "DialogWidth": "720"
+    },
+    "Containments][2][Applets][38][Configuration][SensorColors": {
+      "cpu/all/averageFrequency": "14,210,179",
+      "cpu/all/averageTemperature": "210,105,14",
+      "cpu/all/maximumTemperature": "210,14,186"
+    },
+    "Containments][2][Applets][38][Configuration][Sensors": {
+      "highPrioritySensorIds": "[\"cpu/all/averageTemperature\",\"cpu/all/maximumTemperature\"]",
+      "lowPrioritySensorIds": "[\"cpu/all/averageFrequency\"]"
+    },
+    "Containments][2][Applets][43": {
+      "immutability": "1",
+      "plugin": "org.kde.plasma.systemmonitor"
+    },
+    "Containments][2][Applets][43][Configuration": {
+      "CurrentPreset": "org.kde.plasma.systemmonitor",
+      "PreloadWeight": "100"
+    },
+    "Containments][2][Applets][43][Configuration][Appearance": {
+      "chartFace": "org.kde.ksysguard.linechart"
+    },
+    "Containments][2][Applets][43][Configuration][ConfigDialog": {
+      "DialogHeight": "510",
+      "DialogWidth": "680"
+    },
+    "Containments][2][Applets][43][Configuration][SensorColors": {
+      "gpu/gpu0/fan1": "141,14,210",
+      "gpu/gpu0/power": "255,0,127",
+      "gpu/gpu0/temperature": "255,85,0"
+    },
+    "Containments][2][Applets][43][Configuration][Sensors": {
+      "highPrioritySensorIds": "[\"gpu/gpu0/temperature\"]",
+      "lowPrioritySensorIds": "[\"gpu/gpu0/fan1\"]",
+      "totalSensors": "[\"gpu/gpu0/power\",\"gpu/gpu0/temperature\"]"
+    },
+    "Containments][2][Applets][43][Configuration][org.kde.ksysguard.linechart][General": {
+      "rangeAutoY": "false",
+      "rangeFromY": "25"
+    },
+    "Containments][2][Applets][44": {
+      "immutability": "1",
+      "plugin": "org.kde.plasma.digitalclock"
+    },
+    "Containments][2][Applets][44][Configuration": {
+      "PreloadWeight": "100",
+      "popupHeight": "450",
+      "popupWidth": "810"
+    },
+    "Containments][2][Applets][44][Configuration][Appearance": {
+      "lastSelectedTimezone": "UTC+00:00",
+      "selectedTimeZones": "America/Los_Angeles,America/Vancouver,America/Phoenix,Local,UTC+00:00,Europe/London,Asia/Jerusalem",
+      "showDate": "false",
+      "wheelChangesTimezone": "true"
+    },
+    "Containments][2][Applets][44][Configuration][ConfigDialog": {
+      "DialogHeight": "510",
+      "DialogWidth": "680"
+    }
+  }
+}
