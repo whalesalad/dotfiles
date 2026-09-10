@@ -15,3 +15,7 @@ workspace sitrep \
 
 workspace pulsar \
   root_dir="$HOME/code/ocean/pulsar"
+
+workspace teamux \
+  root_dir="$HOME/code/teamux"
+

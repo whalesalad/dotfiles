@@ -11,6 +11,7 @@ vim.pack.add({
   github 'akinsho/bufferline.nvim',
   github 'nvim-tree/nvim-tree.lua',
   github 'nvim-mini/mini.icons',
+  github 'nvim-treesitter/nvim-treesitter',
   github 'MeanderingProgrammer/render-markdown.nvim',
   {
     src = github 'saghen/blink.cmp',
@@ -18,6 +19,10 @@ vim.pack.add({
     version = vim.version.range '1.*',
   },
 }, { confirm = false })
+
+-- Fenced Python uses the same theme captures as Python source files. The
+-- parser manager also supplies language queries; installed parsers are skipped.
+require('nvim-treesitter').install { 'python' }
 
 require('guess-indent').setup {}
 
