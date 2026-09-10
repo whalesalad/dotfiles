@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "widgets": [
+    {
+      "key": "world-clock",
+      "plugin": "org.kde.plasma.digitalclock",
+      "groups": {
+        "": {
+          "popupHeight": "451",
+          "popupWidth": "810"
+        },
+        "Appearance": {
+          "lastSelectedTimezone": "Etc/UTC",
+          "selectedTimeZones": "America/Los_Angeles,America/Vancouver,America/Phoenix,Local,Etc/UTC,Europe/London,Asia/Jerusalem",
+          "showDate": "false",
+          "showLocalTimezone": "true",
+          "wheelChangesTimezone": "true"
+        }
+      }
+    },
+    {
+      "key": "cpu",
+      "plugin": "org.kde.plasma.systemmonitor",
+      "groups": {
+        "": {
+          "popupHeight": "400",
+          "popupWidth": "560"
+        },
+        "Appearance": {
+          "chartFace": "org.kde.ksysguard.linechart",
+          "title": "CPU/GPU Usage"
+        },
+        "SensorLabels": {
+          "cpu/all/usage": "CPU"
+        },
+        "Sensors": {
+          "highPrioritySensorIds": "[\"cpu/all/usage\",\"gpu/gpu\\\\d+/usage\"]",
+          "lowPrioritySensorIds": "[]",
+          "totalSensors": "[\"cpu/all/usage\"]"
+        },
+        "FaceGrid/Appearance": {
+          "chartFace": "org.kde.ksysguard.linechart",
+          "showTitle": "false"
+        },
+        "FaceGrid/Sensors": {
+          "highPrioritySensorIds": "[\"cpu/all/usage\"]"
+        },
+        "FaceGrid/SensorColors": {
+          "cpu/all/usage": "197,14,210"
+        },
+        "SensorColors": {
+          "cpu/all/usage": "197,14,210",
+          "gpu/gpu0/coreFrequency": "0,85,255",
+          "gpu/gpu0/power": "49,239,57",
+          "gpu/gpu0/usage": "255,170,0",
+          "gpu/gpu\\d+/usage": "239,49,114"
+        }
+      }
+    },
+    {
+      "key": "memory",
+      "plugin": "org.kde.plasma.systemmonitor",
+      "groups": {
+        "": {
+          "popupHeight": "400",
+          "popupWidth": "560"
+        },
+        "Appearance": {
+          "chartFace": "org.kde.ksysguard.linechart",
+          "title": "Memory Usage"
+        },
+        "Sensors": {
+          "highPrioritySensorIds": "[\"memory/physical/used\"]",
+          "lowPrioritySensorIds": "[\"memory/physical/total\"]",
+          "totalSensors": "[\"memory/physical/usedPercent\"]"
+        },
+        "SensorColors": {
+          "memory/physical/used": "14,210,179"
+        }
+      }
+    },
+    {
+      "key": "cpu-temperature",
+      "plugin": "org.kde.plasma.systemmonitor",
+      "groups": {
+        "": {
+          "popupHeight": "217",
+          "popupWidth": "245"
+        },
+        "Appearance": {
+          "chartFace": "org.kde.ksysguard.linechart",
+          "title": "CPU Temp"
+        },
+        "Sensors": {
+          "highPrioritySensorIds": "[\"cpu/all/averageTemperature\", \"cpu/all/maximumTemperature\"]",
+          "lowPrioritySensorIds": "[\"cpu/all/averageFrequency\"]",
+          "totalSensors": "[]"
+        },
+        "SensorColors": {
+          "cpu/all/averageTemperature": "210,105,14",
+          "cpu/all/maximumTemperature": "210,14,186"
+        }
+      }
+    }
+  ],
+  "source": {
+    "plasma": "plasmashell 6.7.4",
+    "captured": "2026-09-08T00:42:27.077543-04:00"
+  }
+}

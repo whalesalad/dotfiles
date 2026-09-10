@@ -1,0 +1,7 @@
+*.json.bak
+*.json.tmp
+
+# Private desktop recovery archives must not be published.
+*.tar.gz
+*.tar.gz.sha256
+kde-snapshots/

@@ -7,6 +7,9 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "auto_install_extensions": {
+    "catppuccin-icons": true
+  },
   "markdown_preview_font_size": 18.0,
   "markdown_preview_font_family": "Verdana",
   "preview_tabs": {
@@ -228,4 +231,3 @@
     "dark": "whalesalad",
   },
 }
-
