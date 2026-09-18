@@ -63,13 +63,52 @@ The symlink is the deployment mechanism. Editing either
 `~/.config/nvim/...` or `~/code/dotfiles/nvim/...` changes the same files, but
 repository paths are preferred in documentation and commits.
 
+## Dependency management
+
+The configuration automates plugin and declared language-parser installation.
+Installing Neovim itself and its external tools still requires machine setup.
+Updating dotfiles or plugins does not upgrade the Neovim executable.
+
+| Layer | Manager and source of truth | Installation and updates |
+| --- | --- | --- |
+| Neovim executable | Machine installation; version must meet the requirements below | Installed and upgraded separately; Lucifer currently uses a manual installation in `/usr/local` |
+| Editor plugins | Built-in `vim.pack`; specs in `lua/whalesalad/plugins.lua`, exact Git revisions in `nvim-pack-lock.json` | Missing plugins install at startup; `:PackUpdate` reviews explicit updates |
+| Language parsers and highlighting queries | `nvim-treesitter`; required languages in its `install` list in `plugins.lua` | Missing declared languages install automatically; `:TSUpdate` synchronizes installed parsers with the revisions selected by the plugin |
+| External tools | System packages or a separate tool installation | Git, ripgrep, clipboard tools, C compiler, curl, tar, and Tree-sitter CLI are provisioned separately |
+
+The plugin lockfile belongs in Git. It also pins the `nvim-treesitter` version
+that selects parser revisions, but it does not pin Neovim, the compiler, or
+the Tree-sitter CLI. Parser updates are a separate step after updating that
+plugin; they are not currently connected to an automatic update hook.
+
+There is no single manager for every layer. A common alternative for plugins
+is [lazy.nvim](https://github.com/folke/lazy.nvim); LazyVim is a preconfigured
+distribution built around it. This setup uses Neovim's native `vim.pack` for
+plugins and [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+for parsers and queries. A distribution would still depend on a compatible
+Neovim executable and external tools.
+
+For a language that should be available on every machine, add it to the
+`nvim-treesitter` install list in `plugins.lua` and commit that change. For a
+local addition, use `:TSInstall <language>` and reopen the document after
+installation finishes. That command alone does not record the language in
+dotfiles. Python is currently the only language explicitly declared; Neovim
+also ships a small set of parsers, including Markdown and Lua.
+
+There is no complete machine bootstrap for this stack yet. The remaining
+automation gap is checking and provisioning compatible Neovim and external
+tool versions before linking the configuration. The plugin lockfile already
+handles plugin revisions; replacing the plugin manager would not close the
+machine-provisioning gap.
+
 ## External requirements
 
 The current baseline is Neovim 0.12 or newer, Git, ripgrep, and a clipboard
-provider. On Fedora:
+provider. Installing language parsers also requires a C compiler, curl, tar,
+and the Tree-sitter CLI (0.26.1 or newer). On Fedora:
 
 ```sh
-sudo dnf install neovim git ripgrep wl-clipboard
+sudo dnf install neovim git ripgrep wl-clipboard gcc curl tar tree-sitter-cli
 ```
 
 WezTerm supplies true color and the configured Cascadia Code PL glyphs. Toshy
@@ -101,6 +140,7 @@ An active Neovim pane should report an extended mode such as `Ext 2`.
 | `bufferline.nvim` | GUI-like open-buffer tabs |
 | `nvim-tree.lua` | Project-rooted sidebar |
 | `mini.icons` | Icons for Markdown and compatible plugins |
+| `nvim-treesitter` | Language parsers and queries for syntax colors in fenced code |
 | `render-markdown.nvim` | In-editor Markdown presentation and tables |
 | `blink.cmp` | Buffer, path, snippet, and future LSP completion |
 
@@ -219,6 +259,11 @@ it does not silently apply updates.
 - `:quit` declines it.
 - `:restart` loads the accepted revisions cleanly.
 
+If `nvim-treesitter` changed, run `:TSUpdate` after that restart, wait for its
+installations to finish, and restart again. This ensures the newly loaded
+plugin chooses the parser revisions and the final session loads the rebuilt
+parsers.
+
 After an update, inspect and commit `nvim-pack-lock.json`. Run at least the
 tests below and manually exercise the entry points affected by updated
 plugins.
@@ -286,8 +331,20 @@ Inspect any highlight under the cursor with:
 ## Markdown maintenance
 
 `render-markdown.nvim` uses the system Markdown and Markdown-inline
-Tree-sitter parsers. HTML, LaTeX, and YAML rendering are disabled because
-their parsers are not part of the current scope.
+Tree-sitter parsers. `nvim-treesitter` installs Python's parser and highlight
+queries so language-tagged fences use the Whalesalad syntax colors. Add
+languages to its `install` list in `plugins.lua` to include them on every
+machine, or run `:TSInstall <language>` for a local addition. Follow
+[Updating plugins](#updating-plugins) when updating the parser manager. HTML,
+LaTeX, and YAML rendering are disabled because their parsers are not part of
+the current scope.
+
+A fenced block needs a language tag, that language's parser, and highlighting
+queries to distinguish its tokens. The theme then supplies their colors.
+The Markdown parser alone can identify the code block without understanding
+the language inside it. If an entire block has one color, check the language
+tag and parser installation before changing the theme. Language servers are
+not required for this highlighting.
 
 Useful diagnostics:
 
@@ -299,6 +356,33 @@ Useful diagnostics:
 
 Reconsider the disabled components only when a real document requires them;
 install their parsers and test health in the same change.
+
+### Lucifer deployment and Python highlighting repair — 2026-09-09
+
+Two separate gaps were found during deployment:
+
+- Lucifer had LazyVim configuration and Neovim
+  `v0.10.0-dev-1934+g031088fc0`, with a binary dated December 2023 in
+  `/usr/local/bin`. The old configuration, plugins, cache, and state were
+  removed. Neovim 0.12.5 was installed from the official release archive,
+  verified against its published SHA-256 digest, and `~/.config/nvim` was
+  linked to this repository. The original binary's installation history was
+  not established; changing configuration does not upgrade an executable.
+- Python fences remained solid purple because the dotfiles setup supplied
+  Markdown support but no Python parser or queries. This was missing language
+  support in the new configuration, independent of the old Neovim version.
+  Adding `nvim-treesitter` and declaring Python fixed it without changing the
+  Whalesalad theme.
+
+The Tree-sitter CLI release binaries tried during installation required
+`GLIBC_2.39`, which Lucifer's Debian 12 installation did not provide. CLI
+0.26.1 was built with Cargo from the upstream `v0.26.1` source tag and
+installed in `~/.local/bin/tree-sitter`. The system C library was unchanged.
+This CLI remains a separately managed dependency.
+
+Verification confirmed Python was parsed inside a Markdown fence and its
+highlighting resolved to Whalesalad's red keywords (`#ff3854`), green strings
+(`#8fff58`), and blue numbers (`#0a9cff`).
 
 ## Validation checklist
 

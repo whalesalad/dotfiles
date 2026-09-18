@@ -144,6 +144,11 @@ Markdown is rendered directly inside Neovim. Headings, code blocks, bullets,
 checkboxes, and pipe tables receive a richer presentation using the
 `whalesalad` palette.
 
+Label fenced code blocks with their language (for example, start a Python
+block with three backticks followed by `python`) to use the theme's syntax
+colors. Python's Tree-sitter parser is installed automatically. For another
+language, run `:TSInstall <language>` once and reopen the Markdown file.
+
 - Normal mode shows the rendered document.
 - Insert mode reveals the source around the cursor so it remains editable.
 - `:RenderMarkdown toggle` toggles rendering globally.
@@ -210,6 +215,7 @@ useful escape hatch when a custom key is forgotten.
 | Completion | Blink | `lua/whalesalad/plugins.lua` |
 | Git gutter marks | Gitsigns | `lua/whalesalad/plugins.lua` |
 | Rich Markdown | render-markdown | `lua/whalesalad/plugins.lua` |
+| Python syntax colors inside Markdown fences | nvim-treesitter and Whalesalad | `lua/whalesalad/plugins.lua` |
 | Shortcut reminders | WhichKey | `lua/whalesalad/plugins.lua` |
 | Mac-style entry points | Toshy, tmux extended keys, and Neovim mappings | `lua/whalesalad/keymaps.lua` |
 | Visual design | Local `whalesalad` colorscheme ported from Zed | `colors/whalesalad.lua` |
@@ -219,14 +225,22 @@ useful escape hatch when a custom key is forgotten.
 Plugins never check for updates during startup. Their exact revisions live in
 `nvim-pack-lock.json`.
 
+For what installs automatically, which tools need separate machine setup,
+and how to add languages, see
+[Dependency management](DEVELOPING.md#dependency-management). The maintainer
+guide also records
+[Lucifer's upgrade and the Python highlighting fix](DEVELOPING.md#lucifer-deployment-and-python-highlighting-repair--2026-09-09).
+
 When you intentionally want updates:
 
 1. Run `:PackUpdate`.
 2. Review the proposed changes. Use `]]` and `[[` to move between plugins.
 3. Run `:write` to apply all proposed updates, or `:quit` to decline them.
 4. Run `:restart` so every updated plugin is loaded cleanly.
-5. Exercise `Command-P`, `Command-B`, `Space` then `g`, and a Markdown file.
-6. Commit the changed `nvim-pack-lock.json` if the update is good.
+5. If `nvim-treesitter` changed, run `:TSUpdate`, wait for it to finish, then
+   restart again to load the updated language parsers.
+6. Exercise `Command-P`, `Command-B`, `Space` then `g`, and a Markdown file.
+7. Commit the changed `nvim-pack-lock.json` if the update is good.
 
 For adding, removing, pinning, or rolling back plugins, see
 [`DEVELOPING.md`](DEVELOPING.md).
@@ -241,6 +255,7 @@ For adding, removing, pinning, or rolling back plugins, see
 | File or text search fails | Run `rg --version` outside Neovim |
 | Desktop clipboard fails | Run `:checkhealth vim.provider`; confirm `wl-copy` is installed |
 | Markdown looks raw | Confirm the filetype with `:set filetype?`, then run `:RenderMarkdown enable` |
+| A fenced code block has only one color | Add its language tag and install its parser with `:TSInstall <language>`, then reopen the file |
 | A plugin behaves strangely | Run `:checkhealth`, then `:messages` |
 | Configuration will not start | Run `nvim --clean` to open Neovim without this config |
 
