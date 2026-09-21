@@ -21,10 +21,14 @@ background.
 
 - Add `bin/host-color`, which accepts a hostname and prints one xterm 256-color
   index followed by a newline.
-- Normalize input to the lowercased short hostname before hashing it with POSIX
-  `cksum`.
-- Select from the approved palette: `196`, `197`, `198`, `201`, `202`, `208`,
-  `214`, `220`, `135`, `39`, `45`, and `82`.
+- Normalize input to the lowercased short hostname, then hash the bytes
+  `host-color:251:<hostname>` without a trailing newline using POSIX `cksum`.
+- Use the checksum modulo 7 to select from the ordered palette: `135` (purple),
+  `205` (pink), `208` (orange), `220` (yellow), `82` (lime), `45` (cyan), and
+  `75` (blue). Keep the seed and palette order stable.
+- This gives Lucifer purple, Chewy orange, and Viper lime with no host-specific
+  rules. Arbitrary hostnames can still collide. See
+  [the palette decision](hostname-color-proposal.md) for tradeoffs.
 - Use bright orange (`208`) when input is empty, `cksum` is unavailable, or its
   output is invalid.
 - Keep the helper independent of zsh and tmux presentation details.

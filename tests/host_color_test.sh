@@ -33,16 +33,20 @@ assert_equal() {
 }
 
 viper_color=$($HOST_COLOR viper.mk3.dev)
-assert_equal 202 "$viper_color" 'viper maps to orange-red'
+assert_equal 82 "$viper_color" 'viper maps to lime'
 assert_equal "$viper_color" "$($HOST_COLOR VIPER.quad5.net)" 'hash uses the lowercased short hostname'
 
 lucifer_color=$($HOST_COLOR lucifer.quad5.net)
-[[ $lucifer_color != "$viper_color" ]] || fail 'representative hostnames receive distinct colors'
-pass 'representative hostnames receive distinct colors'
+assert_equal 135 "$lucifer_color" 'lucifer maps to purple'
+chewy_color=$($HOST_COLOR chewy.mk3.dev)
+assert_equal 208 "$chewy_color" 'chewy maps to orange'
 
-approved_palette=' 196 197 198 201 202 208 214 220 135 39 45 82 '
-for color in "$viper_color" "$lucifer_color"; do
+approved_palette=' 135 205 208 220 82 45 75 '
+for host in viper lucifer chewy titan pulsar build-01 build-02 new-host; do
+    color=$($HOST_COLOR "$host")
     [[ $approved_palette == *" $color "* ]] || fail "host color $color belongs to the approved palette"
+    assert_equal "$color" "$($HOST_COLOR "$host")" "$host color is repeatable"
+    assert_equal "$color" "$($HOST_COLOR "${host^^}.example.net")" "$host ignores case and domain"
 done
 pass 'host colors belong to the approved palette'
 
