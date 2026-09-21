@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Show only the largest whole unit, keeping days even for long uptimes.
+read -r seconds rest < /proc/uptime || exit 0
+seconds=${seconds%%.*}
+
+if [ "$seconds" -ge 86400 ]; then
+    printf '%dd\n' "$((seconds / 86400))"
+elif [ "$seconds" -ge 3600 ]; then
+    printf '%dh\n' "$((seconds / 3600))"
+else
+    printf '%dm\n' "$((seconds / 60))"
+fi
