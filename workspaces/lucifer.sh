@@ -19,3 +19,10 @@ workspace pulsar \
 workspace teamux \
   root_dir="$HOME/code/teamux"
 
+# pattern here. default to this if unspecified.
+workspace agentdrop \
+  root_dir="$HOME/code/agentdrop"
+
+workspace invoicing \
+  root_dir="$HOME/code/invoicing" \
+  pyenv="invoicing"

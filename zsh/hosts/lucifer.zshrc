@@ -17,3 +17,7 @@ alias bat=batcat
 t() {
   "$HOME/code/dotfiles/bin/t" "$@"
 }
+
+# >>> Codex installer >>>
+export PATH="$HOME/.local/bin:$PATH"
+# <<< Codex installer <<<
