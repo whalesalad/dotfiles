@@ -1,0 +1,16 @@
+#!/bin/sh
+# YOLO-specific trial deployment. Stop/remove the old container before upgrades.
+set -eu
+server_dir="$HOME/.local/share/whisper-server"
+image='ghcr.io/ggml-org/whisper.cpp@sha256:2e2425d4f89c317b79fdca6b6589a5e5e8f5bb3bb27352f1ce1b21f88cdb3834'
+test -r "$server_dir/models/ggml-base.en.bin"
+docker run -d --name voxtype-whisper --restart unless-stopped \
+  --device /dev/dri --security-opt no-new-privileges --cap-drop ALL \
+  --read-only --tmpfs /tmp:rw,nosuid,nodev,size=128m \
+  --user "$(id -u):$(id -g)" \
+  --group-add "$(stat -c %g /dev/dri/renderD128)" \
+  --log-opt max-size=10m --log-opt max-file=3 \
+  -p 127.0.0.1:18080:8080 -v "$server_dir/models:/models:ro" \
+  "$image" whisper-server --host 0.0.0.0 --port 8080 \
+  --inference-path /v1/audio/transcriptions --tmp-dir /tmp \
+  -m /models/ggml-base.en.bin -l en -t 4
