@@ -43,16 +43,19 @@ assert_equal '%n@%m' "$REPLY" 'non-michael context contains user and hostname'
 
 _agnoster_host_foreground viper.mk3.dev
 viper_color=$REPLY
+assert_equal 82 "$viper_color" 'prompt gives viper lime'
 _agnoster_host_foreground VIPER.quad5.net
 assert_equal "$viper_color" "$REPLY" 'hostname color uses the lowercased short hostname'
 
 _agnoster_host_foreground lucifer.quad5.net
 lucifer_color=$REPLY
-[[ "$lucifer_color" != "$viper_color" ]] || fail 'representative hostnames receive distinct colors'
-pass 'representative hostnames receive distinct colors'
+assert_equal 135 "$lucifer_color" 'prompt gives lucifer purple'
+_agnoster_host_foreground chewy.mk3.dev
+chewy_color=$REPLY
+assert_equal 208 "$chewy_color" 'prompt gives chewy orange'
 
-approved_palette=(196 197 198 201 202 208 214 220 135 39 45 82)
-for color in "$viper_color" "$lucifer_color"; do
+approved_palette=(135 205 208 220 82 45 75)
+for color in "$viper_color" "$lucifer_color" "$chewy_color"; do
   (( ${approved_palette[(Ie)$color]} )) || fail "host color $color belongs to the approved palette"
 done
 pass 'host colors belong to the approved palette'

@@ -17,7 +17,9 @@ if [ -z "$normalized_host" ]; then
     exit 0
 fi
 
-checksum_output=$(printf '%s' "$normalized_host" | cksum 2>/dev/null) || checksum_output=
+# One shared seed separates the current hosts without hostname-specific rules.
+# Keep this prefix and the palette order stable to preserve assigned colors.
+checksum_output=$(printf 'host-color:251:%s' "$normalized_host" | cksum 2>/dev/null) || checksum_output=
 checksum=${checksum_output%%[[:space:]]*}
 
 case $checksum in
@@ -27,19 +29,14 @@ case $checksum in
         ;;
 esac
 
-case $((checksum % 12)) in
-    0) color=196 ;;
-    1) color=197 ;;
-    2) color=198 ;;
-    3) color=201 ;;
-    4) color=202 ;;
-    5) color=208 ;;
-    6) color=214 ;;
-    7) color=220 ;;
-    8) color=135 ;;
-    9) color=39 ;;
-    10) color=45 ;;
-    11) color=82 ;;
+case $((checksum % 7)) in
+    0) color=135 ;; # purple
+    1) color=205 ;; # pink
+    2) color=208 ;; # orange
+    3) color=220 ;; # yellow
+    4) color=82 ;;  # lime
+    5) color=45 ;;  # cyan
+    6) color=75 ;;  # blue
 esac
 
 printf '%s\n' "$color"
