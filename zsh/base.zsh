@@ -34,7 +34,7 @@ strip_trailing_ws() {
 }
 
 # Alias to list remote tmux sessions
-alias luls='ssh lucifer tmux ls'
+alias luls='ssh lucifer.mk3.dev tmux ls'
 
 source "${0:a:h}/${UNAME}.zshrc"
 
