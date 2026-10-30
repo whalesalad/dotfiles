@@ -42,3 +42,8 @@ workspace domparse \
 workspace blasphemy \
   root_dir="$HOME/code/blasphemy"
 
+workspace metabase \
+  root_dir="$HOME/code/ocean/metabase"
+
+workspace infrastructure \
+  root_dir="$HOME/code/ocean/infrastructure"
