@@ -8,6 +8,7 @@
 Machine setup runbooks:
 
 - [Voxtype push-to-talk dictation](docs/voxtype-push-to-talk-runbook.md)
+- [Clipboard copying from Lucifer through Mosh and tmux](docs/mosh-tmux-clipboard.md)
 
 ### Neovim
 

@@ -19,3 +19,26 @@ workspace pulsar \
 workspace teamux \
   root_dir="$HOME/code/teamux"
 
+# pattern here. default to this if unspecified.
+workspace agentdrop \
+  root_dir="$HOME/code/agentdrop"
+
+workspace invoicing \
+  root_dir="$HOME/code/invoicing" \
+  pyenv="invoicing"
+
+workspace megadb \
+  root_dir="$HOME/code/ocean/megadb"
+  pyenv="megadb"
+
+workspace fparse \
+  root_dir="$HOME/code/ocean/fparse"
+  pyenv="fparse"
+
+workspace domparse \
+  root_dir="$HOME/code/ocean/domparse"
+  pyenv="domparse"
+
+workspace blasphemy \
+  root_dir="$HOME/code/blasphemy"
+
