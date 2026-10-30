@@ -90,6 +90,11 @@
         },
         {
           "paths": [
+            "/home/michael/code/blasphemy"
+          ]
+        },
+        {
+          "paths": [
             "/home/michael/code/homelab"
           ]
         },
