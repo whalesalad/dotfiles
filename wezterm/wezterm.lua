@@ -145,7 +145,7 @@ end
 -- Chewy's display needs a smaller font and maximized windows. Keep other
 -- machines (including Viper and Lucifer) on the defaults above.
 if wezterm.hostname():match("^[^%.]+") == "chewy" then
-    config.font_size = 12.0
+    config.font_size = 12
 
     -- This event also fires for newly created windows. Remember each window
     -- across reloads so manually restoring its size remains possible.
