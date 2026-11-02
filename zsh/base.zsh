@@ -23,9 +23,9 @@ lu() {
                 return 2
                 ;;
         esac
-        ssh -t lucifer "\$HOME/code/dotfiles/bin/t $1"
+        ssh -t lucifer.mk3.dev "\$HOME/code/dotfiles/bin/t $1"
     else
-        ssh -t lucifer '$HOME/code/dotfiles/bin/t'
+        ssh -t lucifer.mk3.dev '$HOME/code/dotfiles/bin/t'
     fi
 }
 
