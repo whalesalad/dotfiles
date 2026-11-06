@@ -1,0 +1,5 @@
+* { font-family: sans-serif; font-size: 12px; min-height: 0; }
+window#waybar { background: #20232b; color: #eeeeee; }
+#workspaces button { color: #cccccc; padding: 0 6px; }
+#workspaces button.active { background: #405678; color: white; }
+#clock, #battery, #network, #pulseaudio, #tray { padding: 0 7px; }

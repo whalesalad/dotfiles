@@ -7,6 +7,10 @@
 
 Machine setup runbooks:
 
+- [Fedora GNOME alongside KDE](docs/fedora-gnome.md)
+- [Chewy desktop setup and Niri experiment](hosts/chewy/README.md)
+- [Viper GNOME rollout checklist](hosts/viper/gnome.md)
+
 - [Voxtype push-to-talk dictation](docs/voxtype-push-to-talk-runbook.md)
 - [Clipboard copying from Lucifer through Mosh and tmux](docs/mosh-tmux-clipboard.md)
 - [viper system config (host-specific: SSSD offline login, hang diagnostics)](hosts/viper/README.md)

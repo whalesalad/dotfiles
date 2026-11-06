@@ -1,0 +1,54 @@
+// Chewy experimental Niri configuration; installed but not session-tested.
+input {
+    keyboard { numlock; }
+    touchpad { tap; natural-scroll; }
+}
+output "DSI-1" {
+    mode "1200x1920@50.002"
+    scale 1.5
+    transform "270"
+    position x=0 y=0
+}
+layout {
+    gaps 4
+    center-focused-column "always"
+    default-column-width { proportion 1.0; }
+    focus-ring { width 2; active-color "#89b4fa"; }
+    border { off; }
+}
+window-rule {
+    open-maximized true
+}
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+    open-maximized true
+}
+hotkey-overlay { skip-at-startup; }
+// Alt-Tab (Toshy's Cmd-Tab output) reserved for app-group switcher.
+// Do not silently substitute Niri's window-based switcher.
+recent-windows {
+    binds {
+        Alt+grave { next-window filter="app-id"; }
+        Alt+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+binds {
+    Alt+F1 hotkey-overlay-title="Open app launcher" { spawn "fuzzel"; }
+    Ctrl+Shift+space { spawn "fuzzel"; }
+    Alt+Return hotkey-overlay-title="Open WezTerm" { spawn "wezterm"; }
+    Alt+F4 { close-window; }
+    Alt+F10 { maximize-column; }
+    Ctrl+Alt+Left { focus-column-left; }
+    Ctrl+Alt+Right { focus-column-right; }
+    Ctrl+Alt+Up { focus-workspace-up; }
+    Ctrl+Alt+Down { focus-workspace-down; }
+    Ctrl+Alt+Delete { quit; }
+    Ctrl+Alt+l { spawn "swaylock" "-f"; }
+    Print { screenshot; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+    XF86AudioMute allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86MonBrightnessUp { spawn "brightnessctl" "set" "5%+"; }
+    XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+}

@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh existing Toshy services after Niri publishes its environment
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+ConditionEnvironment=XDG_CURRENT_DESKTOP=niri
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart toshy-wlroots-dbus.service toshy-config.service
+RemainAfterExit=yes

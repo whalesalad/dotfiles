@@ -1,0 +1,39 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 28,
+  "modules-left": [
+    "niri/workspaces"
+  ],
+  "modules-center": [
+    "niri/window"
+  ],
+  "modules-right": [
+    "pulseaudio",
+    "network",
+    "battery",
+    "clock",
+    "tray"
+  ],
+  "niri/window": {
+    "max-length": 40
+  },
+  "clock": {
+    "format": "{:%a %H:%M}"
+  },
+  "battery": {
+    "format": "BAT {capacity}%"
+  },
+  "network": {
+    "format-wifi": "WiFi {signalStrength}%",
+    "format-ethernet": "Ethernet",
+    "format-disconnected": "Offline"
+  },
+  "pulseaudio": {
+    "format": "VOL {volume}%",
+    "format-muted": "Muted"
+  },
+  "tray": {
+    "spacing": 8
+  }
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Authentication agent for Niri
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+ConditionEnvironment=XDG_CURRENT_DESKTOP=niri
+
+[Service]
+ExecStart=/usr/libexec/kf6/polkit-kde-authentication-agent-1
+Restart=on-failure

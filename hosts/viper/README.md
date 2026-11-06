@@ -105,3 +105,8 @@ drop-in above is the only SSSD change).
 - BIOS was updated 03.02 → 03.04 the same day.
 - The 2026-11-02 fingerprint experiment (Plasma Login PAM override and resume
   helper) was removed; see commit `bb46e07`.
+
+## Optional GNOME desktop
+
+See the [GNOME rollout checklist](gnome.md). It preserves KDE and existing Toshy;
+this rollout is planned and has not yet been verified on Viper.
