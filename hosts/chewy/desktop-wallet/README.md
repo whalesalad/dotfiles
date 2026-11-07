@@ -84,3 +84,42 @@ password if PAM unlock did not complete; do not create a replacement wallet.
 References:
 - https://github.com/KDE/kwallet/blob/master/README.md
 - https://github.com/KDE/kwallet-pam
+
+## GNOME login delay investigation and scoped mitigation
+
+November 7 return from Niri to GNOME showed about 25 seconds of post-auth startup
+waiting. Authentication succeeded at monotonic 3528.78; GNOME initialized near
+3530.36, then Online Accounts cleanup timed out near 3555.94. Wallet fallback
+readiness was delayed until 3557.14; GNOME portal until 3558.16. An earlier GNOME
+login had the same pattern. No failed user units remained afterward.
+
+PAM ksecretd loaded Qt's GTK3 platform theme. A credential/GTK/Online Accounts/
+portal startup cycle is suspected, not fully reproduced. Isolated private-bus
+probes with empty config/data did not reproduce the 25-second loop. A generic
+Qt theme did demonstrate no GTK plugin loaded and provider readiness near 0.05s
+in that isolated test; this is not proof of actual login improvement.
+
+Applied process-scoped QT_QPA_PLATFORMTHEME=generic and
+QT_NO_XDG_DESKTOP_PORTAL=1 to the non-KDE PAM environment helper, on-demand
+desktop-ksecretd service, and a local kwallet Secret-portal activation descriptor.
+The helper forwards these only to the PAM wallet daemon. Normal apps do not
+inherit them; KDE's native plasma-kwallet-pam service is unchanged. This bypasses
+GTK theme initialization and Qt's automatic portal probing for the provider;
+it does not disable the Secret Service or its implemented Secret portal. Wallet
+prompts in the affected path may use generic Qt styling. No wallet data or
+provider selection changed, and the current daemon was not restarted.
+
+Service/desktop validation passes; current wallet remains unlocked. Actual next
+GNOME login timing and credential continuity are pending. Undo just this step:
+
+```bash
+python3 ~/.local/state/desktop-setup/wallet-startup-20261107-010700/undo.py
+```
+
+The original full-policy undo manifest was also extended to cover the added
+kwallet portal descriptor. Neither undo terminates the current provider.
+
+Source checks:
+- https://raw.githubusercontent.com/qt/qtbase/v6.11.2/src/gui/platform/unix/qgenericunixtheme.cpp
+- https://raw.githubusercontent.com/qt/qtbase/v6.11.2/src/gui/platform/unix/qdesktopunixservices.cpp
+- https://raw.githubusercontent.com/qt/qtbase/v6.11.2/src/plugins/platformthemes/gtk3/qgtk3theme.cpp

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Unlock KDE Wallet outside Plasma
-Exec=/usr/libexec/pam_kwallet_init
+Exec=/usr/bin/env QT_QPA_PLATFORMTHEME=generic QT_NO_XDG_DESKTOP_PORTAL=1 /usr/libexec/pam_kwallet_init
 NoDisplay=true
 NotShowIn=KDE;
 X-systemd-skip=false
