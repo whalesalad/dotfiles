@@ -1,0 +1,3 @@
+#!/bin/sh
+# Keep Chromium encryption on the same backend in every desktop.
+exec /usr/bin/chromium-browser --password-store=kwallet6 "$@"
