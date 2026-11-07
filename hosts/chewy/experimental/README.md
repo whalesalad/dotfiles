@@ -34,6 +34,7 @@ install -Dm644 swaylock/config ~/.config/swaylock/config
 for name in niri-idle niri-polkit niri-toshy-refresh; do
   install -Dm644 "systemd/user/$name.service" "$HOME/.config/systemd/user/$name.service"
 done
+install -Dm644 systemd/user/mako.service.d/niri-only.conf ~/.config/systemd/user/mako.service.d/niri-only.conf
 systemctl --user daemon-reload
 systemctl --user add-wants niri.service waybar.service mako.service \
   niri-idle.service niri-polkit.service niri-toshy-refresh.service
@@ -91,3 +92,11 @@ and GNOME available. Reattach tmux using its existing socket/session.
 For rollback, log out of Niri and return to GNOME/KDE. Remove only the five added
 Niri startup links, reload user units, and restore the backed-up destination files.
 Do not globally disable shared Waybar/Mako units or remove shared portal packages.
+
+## First Niri login (November 7)
+
+Session reached; KDE wallet unlocked. KDE xwaylandvideobridge exposed a helper
+window. A user drop-in for app-org.kde.xwaylandvideobridge@autostart.service
+condition-skips it in Niri only. Current window removed; restart skipped. Remove
+the drop-in and daemon-reload to undo. This does not disable xwayland-satellite.
+Browser and physical shortcut acceptance in Niri remain pending.
