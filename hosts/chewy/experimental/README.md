@@ -60,17 +60,8 @@ built-in recent-windows switcher lists windows individually. With one window per
 app, that difference is negligible. With three Chromium windows and one WezTerm
 window, GNOME presents two app choices while Niri normally presents four windows.
 
-The captured config currently leaves Alt-Tab UNBOUND because app grouping was
-initially treated as required. Cmd-backtick is configured to switch only among
-windows of the current app using Niri's `filter="app-id"`.
-
-For a simple experiment, enable Niri's native window switcher by adding these
-lines inside `recent-windows { binds { ... } }`:
-
-```kdl
-Alt+Tab { next-window; }
-Alt+Shift+Tab { previous-window; }
-```
+The installed config now binds Alt-Tab and Alt-Shift-Tab to native recent-window
+switching (Toshy's Cmd-Tab output). Cmd-backtick remains same-app switching.
 
 Toshy already emits these combos for Cmd-Tab; no Toshy edit is needed. This is
 an ordinary Niri config tweak, and a reasonable first trial. It does not enable
@@ -100,3 +91,23 @@ window. A user drop-in for app-org.kde.xwaylandvideobridge@autostart.service
 condition-skips it in Niri only. Current window removed; restart skipped. Remove
 the drop-in and daemon-reload to undo. This does not disable xwayland-satellite.
 Browser and physical shortcut acceptance in Niri remain pending.
+
+## Launcher, switcher and Caps Lock (November 7)
+
+Fuzzel uses Inter 13, a 90% opaque dark background, 18px corners, seven results
+and softer selection/border colors. Install fuzzel/fuzzel.ini under
+~/.config/fuzzel/. It appears on the next launcher invocation. Niri's native
+recent-window switcher uses rounded 18px translucent highlights and compact
+previews; its font is not configurable through the documented native options.
+No replacement switcher or desktop-wide font change was introduced.
+
+Niri keyboard xkb options include caps:escape. GNOME was set to the same option
+with gsettings, preserving unrelated options; replay by adding caps:escape to
+org.gnome.desktop.input-sources xkb-options. KDE already had that mapping.
+Toshy preferences and WezTerm styling were not changed. Config validation passed;
+physical Caps-Escape, switching and visual acceptance remain pending.
+
+Private undo for this appearance/Caps change:
+`python3 ~/.local/state/desktop-setup/niri-ui-20261107-004547/undo.py`.
+The earlier unbound-switcher config is separately retained under
+~/.local/state/desktop-setup/niri-switcher-20261107-004434/.

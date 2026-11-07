@@ -1,6 +1,9 @@
-// Chewy experimental Niri configuration; installed but not session-tested.
+// Chewy Niri configuration; installed and under interactive evaluation.
 input {
-    keyboard { numlock; }
+    keyboard {
+        xkb { options "caps:escape"; }
+        numlock
+    }
     touchpad { tap; natural-scroll; }
 }
 output "DSI-1" {
@@ -25,10 +28,22 @@ window-rule {
     open-maximized true
 }
 hotkey-overlay { skip-at-startup; }
-// Alt-Tab (Toshy's Cmd-Tab output) reserved for app-group switcher.
-// Do not silently substitute Niri's window-based switcher.
+// Toshy maps Cmd-Tab to Alt-Tab. Native recent-window switching.
 recent-windows {
+    open-delay-ms 100
+    highlight {
+        active-color "#89b4fa38"
+        urgent-color "#f38ba850"
+        padding 18
+        corner-radius 18
+    }
+    previews {
+        max-height 280
+        max-scale 0.4
+    }
     binds {
+        Alt+Tab { next-window; }
+        Alt+Shift+Tab { previous-window; }
         Alt+grave { next-window filter="app-id"; }
         Alt+Shift+grave { previous-window filter="app-id"; }
     }
