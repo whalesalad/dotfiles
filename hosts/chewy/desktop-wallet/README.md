@@ -2,8 +2,8 @@
 
 Applied November 7, 2026 on Fedora 45. User selected KDE Wallet and deferred oo7.
 Current KDE provider is ksecretd and kdewallet is unlocked. Browser recovery was
-accepted before these integration changes. Actual GNOME/Niri login acceptance
-remains pending; Niri has never been launched interactively.
+accepted before these integration changes. KDE-to-GNOME login accepted with GitHub session and history preserved;
+Niri has never been launched interactively.
 
 ## Files and behavior
 
@@ -69,7 +69,9 @@ The original browser-cookie recovery copies remain private and separate.
 
 Service syntax and desktop-file validation pass. systemd regenerated the unlock
 helper with NotShowIn KDE (GNOME and Niri allowed). Current Secret Service still
-belongs to ksecretd and the wallet remains unlocked. No logged-out test yet.
+belongs to ksecretd and the wallet remains unlocked. KDE-to-GNOME test passed: ksecretd owns Secret Service, kdewallet unlocked,
+PAM helper success, browser login/history preserved, no failed user units.
+Reverse transition and Niri remain untested.
 
 Close Chromium before each desktop transition. Verify provider ownership and
 wallet unlock before starting it, then verify browser sessions, Git and SSH.
