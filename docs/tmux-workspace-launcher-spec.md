@@ -140,6 +140,16 @@ The star says only that the session exists. Attachment counts are neither querie
 
 Below 80 columns, each row contains only the prefix and name. At 80 columns or wider, each row also displays the window count when running and the configured root directory when available. Names remain the first textual field, output does not wrap, and the picker has no preview pane, icon font requirement, or decorative Unicode dependency.
 
+Wide rows use space-padded name and window-count columns, measured across the
+catalog, so running and inactive rows share the same path column. The displayed
+name is capped at half the terminal width; a hidden field preserves the full
+name for selection. Fzf clips the right edge on smaller displays.
+
+Convention-based discovery and project-local templates are the next design
+steps, tracked in [#3](https://github.com/whalesalad/dotfiles/issues/3) and
+[#4](https://github.com/whalesalad/dotfiles/issues/4). The current launcher still
+uses the explicit host registry and creation-only environment contract below.
+
 Typing in `fzf` filters existing rows. Unmatched query text is not interpreted as a new session name. Arbitrary session creation uses `t <name>` or `lu <name>`.
 
 Canceling the picker with Escape or Ctrl-C exits without making changes. If `fzf` is unavailable, picker mode prints a concise error and known names, then exits nonzero. Named operation continues to work without `fzf`.

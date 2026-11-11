@@ -548,6 +548,24 @@ catalog_records() {
     local root_dir
     local active_index
     local workspace_index
+    local name_width=0
+    local windows_width=9
+
+    for name in "${all_names[@]}"; do
+        if (( ${#name} > name_width )); then
+            name_width=${#name}
+        fi
+    done
+    # Leave room for the other columns even when an external session has a
+    # very long name. The hidden first field always retains the full name.
+    if (( name_width > columns / 2 )); then
+        name_width=$((columns / 2))
+    fi
+    for windows in "${ACTIVE_WINDOWS[@]}"; do
+        if (( ${#windows} + 8 > windows_width )); then
+            windows_width=$((${#windows} + 8))
+        fi
+    done
 
     while IFS= read -r name; do
         [[ -n $name ]] || continue
@@ -571,7 +589,11 @@ catalog_records() {
             if [[ -n $windows ]]; then
                 windows="$windows windows"
             fi
-            printf '%s\t%s %s\t%s\t%s\n' "$name" "$marker" "$name" "$windows" "$root_dir"
+            # Tabs are record delimiters, not display columns: fzf's tab stops
+            # otherwise make paths jump as names and window counts get longer.
+            printf '%s\t%s %-*.*s  %*s  %s\n' \
+                "$name" "$marker" "$name_width" "$name_width" "$name" \
+                "$windows_width" "$windows" "$root_dir"
         fi
     done < <(printf '%s\n' "${all_names[@]}" | LC_ALL=C sort -u)
 }

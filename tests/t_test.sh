@@ -272,16 +272,36 @@ assert_contains \
     '  bad' \
     'picker leaves inactive configured sessions unstarred'
 
+printf 'workspace zeta_long_workspace_name root_dir="%s"\n' \
+    "$TEST_TMP/beta" >> "$TEST_TMP/workspaces.sh"
 export T_COLUMNS=120
 "$T_BIN"
 assert_contains \
     "$(grep "^alpha"$'\t' "$TEST_TMP/fzf-input")" \
-    $'windows\t' \
+    'windows' \
     'wide picker includes a running window count'
 assert_contains \
     "$(grep "^alpha"$'\t' "$TEST_TMP/fzf-input")" \
     "$TEST_TMP/alpha" \
     'wide picker includes a configured root directory'
+
+alpha_display=$(grep "^alpha"$'\t' "$TEST_TMP/fzf-input" | cut -f 2-)
+zeta_display=$(grep "^zeta_long_workspace_name"$'\t' "$TEST_TMP/fzf-input" | cut -f 2-)
+alpha_prefix=${alpha_display%%"$TEST_TMP/alpha"*}
+zeta_prefix=${zeta_display%%"$TEST_TMP/beta"*}
+assert_equal \
+    "${#alpha_prefix}" "${#zeta_prefix}" \
+    'wide picker aligns paths across short/running and long/inactive names'
+assert_not_contains \
+    "$alpha_display" $'\t' \
+    'wide picker uses padding rather than terminal tab stops'
+
+export T_COLUMNS=80
+"$T_BIN"
+zeta_display=$(grep "^zeta_long_workspace_name"$'\t' "$TEST_TMP/fzf-input" | cut -f 2-)
+assert_contains \
+    "$zeta_display" "$TEST_TMP/beta" \
+    '80-column picker retains path information for longer workspace names'
 
 export T_FZF_BIN="$TEST_TMP/bin/does-not-exist"
 assert_command_fails 'missing fzf fails only picker mode' "$T_BIN"
