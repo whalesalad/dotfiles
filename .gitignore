@@ -1,4 +1,8 @@
 .DS_Store
 **/*.private.zsh
 
+# Session journals belong in private Trilium.
+journal/
+journals/
+
 

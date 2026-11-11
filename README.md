@@ -1,5 +1,14 @@
 # dotfiles
 
+This is a public configuration repository. Session journals and personal
+context belong in private Trilium; see [AGENTS.md](AGENTS.md).
+
+After cloning, enable the commit guard:
+
+```sh
+git config core.hooksPath .githooks
+```
+
 ### Setup
 
 1. Ensure that `zsh` is installed. Don't worry about setting it as your shell, ohmyzsh will do that.
